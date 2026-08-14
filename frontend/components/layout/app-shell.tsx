@@ -4,6 +4,14 @@ const navItems = [
   {
     "href": "/",
     "label": "DevHarbor"
+  },
+  {
+    "href": "/repos",
+    "label": "repos"
+  },
+  {
+    "href": "/workspaces",
+    "label": "workspaces"
   }
 ];
 
