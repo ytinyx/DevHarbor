@@ -1,6 +1,6 @@
-# DevHarbor v0.2.0
+# DevHarbor v0.3.0
 
-仓库同步、工作区和代码 API。
+知识库、RAG 问答和项目索引。
 
 ## 启动
 
@@ -19,6 +19,6 @@ uvicorn app.main:app --reload
 
 ## 当前功能
 
-已接入的 API 路由组：repos, workspaces, code_graph, webhooks。
+已接入的 API 路由组：repos, workspaces, code_graph, webhooks, rag, knowledge, search, project_index。
 
 导航只包含本版本页面；共享数据模型、接口契约及依赖模块随需要引入。外部服务不可用时请使用独立 SQLite 数据库和显式的 deterministic embedding 演示配置，关闭 Milvus、自动同步及真实模型调用；这不能验证真实向量检索或模型质量。

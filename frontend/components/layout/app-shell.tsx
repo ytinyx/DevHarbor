@@ -12,6 +12,14 @@ const navItems = [
   {
     "href": "/workspaces",
     "label": "workspaces"
+  },
+  {
+    "href": "/rag",
+    "label": "rag"
+  },
+  {
+    "href": "/knowledge",
+    "label": "knowledge"
   }
 ];
 
