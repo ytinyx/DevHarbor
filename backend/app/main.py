@@ -3,13 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.models import Base
 from app.db.session import engine
-from app.api.routes import repos, workspaces, code_graph, webhooks, rag, knowledge, search, project_index
+from app.api.routes import repos, workspaces, code_graph, webhooks, rag, knowledge, search, project_index, issues, pull_requests, ci, reports, action_drafts
 from app.services.rag.vector_store import MilvusUnavailableError
 from fastapi.responses import JSONResponse
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title=settings.app_name, version="0.3.0")
+    app = FastAPI(title=settings.app_name, version="0.4.0")
     app.add_middleware(CORSMiddleware,
         allow_origins=[s.strip() for s in settings.cors_origins.split(",") if s.strip()],
         allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -25,6 +25,11 @@ def create_app() -> FastAPI:
     app.include_router(knowledge.router, prefix="/api/repos", tags=["knowledge"])
     app.include_router(search.router, prefix="/api/search", tags=["search"])
     app.include_router(project_index.router, prefix="/api/repos", tags=["project_index"])
+    app.include_router(issues.router, prefix="/api", tags=["issues"])
+    app.include_router(pull_requests.router, prefix="/api", tags=["pull_requests"])
+    app.include_router(ci.router, prefix="/api", tags=["ci"])
+    app.include_router(reports.router, prefix="/api/reports", tags=["reports"])
+    app.include_router(action_drafts.router, prefix="/api/action-drafts", tags=["action_drafts"])
 
     @app.get("/health")
     async def health():

@@ -20,6 +20,30 @@ const navItems = [
   {
     "href": "/knowledge",
     "label": "knowledge"
+  },
+  {
+    "href": "/issues",
+    "label": "issues"
+  },
+  {
+    "href": "/pull-requests",
+    "label": "pull-requests"
+  },
+  {
+    "href": "/ci",
+    "label": "ci"
+  },
+  {
+    "href": "/reports",
+    "label": "reports"
+  },
+  {
+    "href": "/action-drafts",
+    "label": "action-drafts"
+  },
+  {
+    "href": "/code-graph",
+    "label": "code-graph"
   }
 ];
 
