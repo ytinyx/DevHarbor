@@ -44,6 +44,14 @@ const navItems = [
   {
     "href": "/code-graph",
     "label": "code-graph"
+  },
+  {
+    "href": "/chat",
+    "label": "chat"
+  },
+  {
+    "href": "/workflow-runs",
+    "label": "workflow-runs"
   }
 ];
 
