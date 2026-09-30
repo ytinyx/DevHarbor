@@ -1,58 +1,15 @@
 import Link from "next/link";
 
 const navItems = [
-  {
-    "href": "/",
-    "label": "DevHarbor"
-  },
-  {
-    "href": "/repos",
-    "label": "repos"
-  },
-  {
-    "href": "/workspaces",
-    "label": "workspaces"
-  },
-  {
-    "href": "/rag",
-    "label": "rag"
-  },
-  {
-    "href": "/knowledge",
-    "label": "knowledge"
-  },
-  {
-    "href": "/issues",
-    "label": "issues"
-  },
-  {
-    "href": "/pull-requests",
-    "label": "pull-requests"
-  },
-  {
-    "href": "/ci",
-    "label": "ci"
-  },
-  {
-    "href": "/reports",
-    "label": "reports"
-  },
-  {
-    "href": "/action-drafts",
-    "label": "action-drafts"
-  },
-  {
-    "href": "/code-graph",
-    "label": "code-graph"
-  },
-  {
-    "href": "/chat",
-    "label": "chat"
-  },
-  {
-    "href": "/workflow-runs",
-    "label": "workflow-runs"
-  }
+  { href: "/", label: "Workspace" },
+  { href: "/knowledge", label: "项目知识" },
+  { href: "/rag", label: "RAG 工作室" },
+  { href: "/repos", label: "Repos" },
+  { href: "/action-drafts", label: "Drafts" },
+  { href: "/workflow-runs", label: "Runs" },
+  { href: "/workspaces", label: "Reports" },
+  { href: "/code-graph", label: "Code Graph" },
+  { href: "/evals", label: "Evals" }
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {

@@ -11,6 +11,7 @@ from app.api.routes import (
     ci,
     code_graph,
     conversations,
+    evaluations,
     feedback,
     issues,
     knowledge,
@@ -42,7 +43,7 @@ def _cors_origin_regex() -> str | None:
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title=settings.app_name, version="0.5.0")
+    app = FastAPI(title=settings.app_name, version="1.0.0")
 
     @app.exception_handler(MilvusUnavailableError)
     async def milvus_unavailable_handler(_request, exc: MilvusUnavailableError) -> JSONResponse:
@@ -75,6 +76,7 @@ def create_app() -> FastAPI:
     app.include_router(project_index.router, prefix="/api/repos", tags=["project_index"])
     app.include_router(rag.router, prefix="/api/rag", tags=["rag"])
     app.include_router(code_graph.router, prefix="/api", tags=["code_graph"])
+    app.include_router(evaluations.router, prefix="/api/evals", tags=["evaluations"])
     app.include_router(webhooks.router, prefix="/api/webhooks", tags=["webhooks"])
     @app.get("/health")
     async def health() -> dict[str, str]:
