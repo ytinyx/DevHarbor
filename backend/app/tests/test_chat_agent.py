@@ -714,9 +714,9 @@ async def test_conversation_rag_tool_prefers_agent_rewritten_query(monkeypatch) 
 
 def test_repo_checkout_path_reuses_existing_same_full_name_checkout(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(settings, "repo_checkout_dir", str(tmp_path))
-    stale_checkout = tmp_path / "old-id-296569015__clowder-ai"
+    stale_checkout = tmp_path / "old-id-owner__repository"
     stale_checkout.mkdir()
-    repo = SimpleNamespace(id=uuid.uuid4(), full_name="296569015/clowder-ai")
+    repo = SimpleNamespace(id=uuid.uuid4(), full_name="owner/repository")
 
     assert _repo_checkout_path(repo) == stale_checkout.resolve()
 

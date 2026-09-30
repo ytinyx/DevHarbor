@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Check, CheckCircle2, Clock3, FileText, Send, ShieldAlert, X } from "lucide-react";
 
 import { apiGet, apiPost } from "@/lib/api";
@@ -40,7 +40,7 @@ export default function ActionDraftsPage() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function load(repo = repoId) {
+  const load = useCallback(async (repo: string) => {
     const suffix = repo ? `?repo_id=${repo}` : "";
     const [draftItems, auditItems] = await Promise.all([
       apiGet<ActionDraft[]>(`/api/action-drafts${suffix}`),
@@ -48,7 +48,7 @@ export default function ActionDraftsPage() {
     ]);
     setDrafts(draftItems);
     setAudits(auditItems);
-  }
+  }, []);
 
   useEffect(() => {
     apiGet<Repository[]>("/api/repos")
@@ -58,7 +58,7 @@ export default function ActionDraftsPage() {
         return load(items[0]?.id || "");
       })
       .catch(() => setRepos([]));
-  }, []);
+  }, [load]);
 
   async function createDraft() {
     if (!repoId || !content.trim()) return;
@@ -74,7 +74,7 @@ export default function ActionDraftsPage() {
         metadata: { source: "manual_review" }
       });
       setContent("");
-      await load();
+      await load(repoId);
     } finally {
       setLoading(false);
     }
@@ -84,7 +84,7 @@ export default function ActionDraftsPage() {
     setLoading(true);
     try {
       await apiPost(`/api/action-drafts/${id}/${action}`, {});
-      await load();
+      await load(repoId);
     } finally {
       setLoading(false);
     }

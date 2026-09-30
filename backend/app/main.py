@@ -43,7 +43,7 @@ def _cors_origin_regex() -> str | None:
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title=settings.app_name, version="1.0.0")
+    app = FastAPI(title=settings.app_name, version="1.0.1")
 
     @app.exception_handler(MilvusUnavailableError)
     async def milvus_unavailable_handler(_request, exc: MilvusUnavailableError) -> JSONResponse:
@@ -84,7 +84,7 @@ def create_app() -> FastAPI:
 
     @app.on_event("startup")
     async def create_demo_tables() -> None:
-        # 课程项目默认自动建表；生产风格流程会在后续加入 Alembic 迁移。
+        # 本地演示默认自动建表；生产部署应使用版本化的数据库迁移。
         Base.metadata.create_all(bind=engine)
         inspector = inspect(engine)
         if "users" in inspector.get_table_names():

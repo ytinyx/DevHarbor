@@ -3,7 +3,7 @@ from cryptography.fernet import Fernet, InvalidToken
 
 def _derive_demo_key(secret: str) -> bytes:
     # Fernet 需要 urlsafe base64 编码的 32 字节密钥。
-    # 这里的确定性本地开发派生方式适合课程项目，不适合生产环境。
+    # 这里的确定性密钥派生用于本地开发，生产环境需要独立的密钥管理。
     import base64
     import hashlib
 
