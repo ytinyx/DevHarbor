@@ -375,6 +375,7 @@ def test_issue_draft_markdown_contains_reproduction_and_actions() -> None:
 
 @pytest.mark.asyncio
 async def test_rag_quality_eval_runs_real_chatagent_and_rolls_back_eval_conversation(monkeypatch) -> None:
+    monkeypatch.setattr(settings, "ragas_enabled", True)
     monkeypatch.setattr(settings, "milvus_enabled", False)
     reset_milvus_store_cache()
     engine = create_engine("sqlite+pysqlite:///:memory:")

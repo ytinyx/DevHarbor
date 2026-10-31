@@ -1,0 +1,55 @@
+{
+  "schema_version": 2,
+  "name": "devharbor-real-project-rag-baseline",
+  "label": "DevHarbor 公开项目示例回归基线",
+  "description": "依据随仓库公开发布的项目说明编写的 5 条示例用例，包含事实查询、能力边界和证据不足判断。保留原 suite_id 兼容文档；不是生产评测报告，不附带已通过或质量分数声明。请先将 docs/datas/sources 中的 3 个 Markdown 文件上传到待评测仓库。",
+  "recommended": true,
+  "cases": [
+    {
+      "id": "local-demo-vector-scope",
+      "kind": "positive",
+      "question": "根据 DevHarbor 本地演示说明，默认 start_rag.ps1 使用什么 Embedding，Milvus 是否启用，向量检索状态是什么？请保留配置或状态的英文名称。",
+      "reference": "默认 start_rag.ps1 使用 deterministic Embedding，关闭 Milvus，向量检索状态为 degraded。这只能验证本地演示和关键词检索链路，不能证明完整向量召回已经跑通。",
+      "source_file": "devharbor-demo-scope.md",
+      "source_type": "knowledge_file",
+      "must_include": ["deterministic", "Milvus", "degraded"]
+    },
+    {
+      "id": "reusable-rag-knowledge",
+      "kind": "positive",
+      "question": "根据 DevHarbor 检索策略，Issue 描述、PR 说明和 Review 评论是否适合进入 RAG？请说明它们与 Issue 或 PR 当前状态字段的查询方式有何区别。",
+      "reference": "Issue 描述、PR 说明和 Review 评论属于可复用的非结构化项目知识，适合进入 RAG。Issue 或 PR 的当前状态属于结构化实时事实，应查询数据库或 API，不能仅依赖历史语义检索结果判断。",
+      "source_file": "devharbor-retrieval-policy.md",
+      "source_type": "knowledge_file",
+      "must_include": ["RAG"]
+    },
+    {
+      "id": "current-code-authority",
+      "kind": "boundary",
+      "question": "根据 DevHarbor 检索策略，如果上传文档里的旧代码片段与当前 checkout 不一致，判断当前函数实现时应以哪个来源为准？请列出用于查找和读取源码的两个 workspace 工具名。这里只解释策略，不要求检查实际工作区。",
+      "reference": "当前函数实现应以当前 checkout 中的源码为准。使用 workspace.search_code 查找代码，再用 workspace.read_file 读取文件核验；上传文档中的旧代码片段只能提供历史背景。",
+      "source_file": "devharbor-retrieval-policy.md",
+      "source_type": "knowledge_file",
+      "must_include": ["checkout", "workspace.search_code", "workspace.read_file"]
+    },
+    {
+      "id": "judge-error-is-incomplete",
+      "kind": "boundary",
+      "question": "根据 DevHarbor 评测说明，Judge 超时、五项必需语义指标没有完整结果时，应判作质量通过、质量失败还是评测不完整？请说明后续处理方式。",
+      "reference": "应标记为评测不完整，不能据此断言质量通过或质量失败。可使用仅重试异常评分，复用已保存的回答和证据；如仍失败，再检查 Judge 配置与超时。只有硬规则和完整语义指标都达到门槛，才能给出整体通过结论。",
+      "source_file": "devharbor-evaluation-scope.md",
+      "source_type": "knowledge_file",
+      "must_include": ["评测不完整"]
+    },
+    {
+      "id": "production-metrics-unknown",
+      "kind": "negative",
+      "question": "只根据 DevHarbor 随仓库公开的示例评测说明，生产部署的问答准确率和 P95 响应延迟具体是多少？如果证据不足，请明确写“无法确定”，不要猜测数值。",
+      "reference": "无法确定。公开示例基线提供用例和来源文档，没有提供生产部署的问答准确率或 P95 响应延迟实测结果；需要对应部署、数据集和测量条件下的真实报告才能回答。",
+      "source_file": "devharbor-evaluation-scope.md",
+      "source_type": "knowledge_file",
+      "must_include": ["无法确定"],
+      "answer_regex": "(?s)(?!.*[0-9０-９]+(?:[.,．][0-9０-９]+)?\\s*(?:[%％]|ms\\b|毫秒|秒)).*无法确定.*"
+    }
+  ]
+}

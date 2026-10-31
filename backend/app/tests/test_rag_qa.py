@@ -36,6 +36,7 @@ def test_build_sources_hides_server_file_path() -> None:
 
 @pytest.mark.asyncio
 async def test_answer_question_uses_llm_and_returns_numbered_sources(monkeypatch) -> None:
+    monkeypatch.setattr(settings, "rag_llm_enabled", True)
     monkeypatch.setattr(settings, "llm_api_key", "test-key")
     monkeypatch.setattr(
         "app.services.rag.qa.search_similar_documents",
@@ -93,6 +94,7 @@ async def test_answer_question_has_offline_extractive_fallback(monkeypatch) -> N
 
 @pytest.mark.asyncio
 async def test_answer_question_does_not_call_llm_when_gate_rejects_evidence(monkeypatch) -> None:
+    monkeypatch.setattr(settings, "rag_llm_enabled", True)
     monkeypatch.setattr(settings, "llm_api_key", "test-key")
 
     async def fake_retrieve(*_args, **_kwargs):

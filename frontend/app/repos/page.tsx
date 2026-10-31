@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Folder, Trash2 } from "lucide-react";
 
 import { Card, PageTitle, PrimaryButton } from "@/components/ui/card";
@@ -57,15 +57,15 @@ export default function ReposPage() {
   const selectedProvider = providers.find((item) => item.value === provider) ?? providers[0];
   const supportsRealConnect = provider === "github" || provider === "github_compatible";
 
-  async function refreshRepos(nextSelectedId?: string) {
+  const refreshRepos = useCallback(async (nextSelectedId?: string) => {
     const items = await apiGet<Repository[]>("/api/repos");
     setRepos(items);
-    setSelectedRepoId(nextSelectedId || selectedRepoId || items[0]?.id || "");
-  }
+    setSelectedRepoId((current) => nextSelectedId || current || items[0]?.id || "");
+  }, []);
 
   useEffect(() => {
     refreshRepos().catch(() => setRepos([]));
-  }, []);
+  }, [refreshRepos]);
 
   async function syncRepo(repoId: string) {
     const data = await apiPost<RepoSyncResult>(`/api/repos/${repoId}/sync`, {
@@ -198,7 +198,7 @@ export default function ReposPage() {
                       className="mt-2 w-full rounded-md border border-line bg-white px-3 py-2 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
                       value={owner}
                       onChange={(event) => setOwner(event.target.value)}
-                      placeholder="296569015"
+                      placeholder="owner"
                     />
                   </label>
 
@@ -208,7 +208,7 @@ export default function ReposPage() {
                       className="mt-2 w-full rounded-md border border-line bg-white px-3 py-2 outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
                       value={repo}
                       onChange={(event) => setRepo(event.target.value)}
-                      placeholder="clowder-ai"
+                      placeholder="repository"
                     />
                   </label>
                 </>

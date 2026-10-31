@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 
 import { apiDelete, apiGet, apiPost, apiUpload } from "@/lib/api";
@@ -124,12 +124,11 @@ export default function RAGPage() {
   const currentRepo = useMemo(() => repos.find((repo) => repo.id === repoId) ?? null, [repos, repoId]);
   const availableSourceTypes = useMemo(() => Object.keys(status?.source_types ?? {}).sort(), [status]);
 
-  async function loadRepos(preferredId?: string) {
+  const loadRepos = useCallback(async (preferredId?: string) => {
     const items = await apiGet<Repository[]>("/api/rag/repositories");
     setRepos(items);
-    const nextId = preferredId && items.some((item) => item.id === preferredId) ? preferredId : repoId && items.some((item) => item.id === repoId) ? repoId : items[0]?.id ?? "";
-    setRepoId(nextId);
-  }
+    setRepoId((current) => preferredId && items.some((item) => item.id === preferredId) ? preferredId : current && items.some((item) => item.id === current) ? current : items[0]?.id ?? "");
+  }, []);
 
   async function loadKnowledge(id: string) {
     const [nextKnowledge, nextStatus] = await Promise.all([
@@ -142,7 +141,7 @@ export default function RAGPage() {
 
   useEffect(() => {
     loadRepos().catch((loadError) => setError(errorMessage(loadError)));
-  }, []);
+  }, [loadRepos]);
 
   useEffect(() => {
     if (!repoId) {

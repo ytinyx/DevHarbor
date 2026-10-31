@@ -28,6 +28,17 @@ if (-not (Test-Path -LiteralPath (Join-Path $frontendDirectory "node_modules") -
 
 New-Item -ItemType Directory -Path $dataDirectory -Force | Out-Null
 
+$demoEnvironmentNames = @(
+    "DATABASE_URL", "MILVUS_ENABLED", "EMBEDDING_PROVIDER", "EMBEDDING_MODEL",
+    "EMBEDDING_DIMENSIONS", "AUTO_SYNC_ENABLED", "DEMO_MODE",
+    "NEXT_PUBLIC_API_BASE_URL", "PYTHONPATH", "LLM_API_KEY",
+    "RAG_LLM_ENABLED", "RAGAS_ENABLED"
+)
+$previousDemoEnvironment = @{}
+foreach ($name in $demoEnvironmentNames) {
+    $previousDemoEnvironment[$name] = [Environment]::GetEnvironmentVariable($name, "Process")
+}
+
 $databaseUrlPath = $databasePath.Replace("\", "/")
 $env:DATABASE_URL = "sqlite:///$databaseUrlPath"
 $env:MILVUS_ENABLED = "false"
@@ -88,7 +99,7 @@ try {
     }
 
     $demoRepositories = Invoke-RestMethod -Uri "http://127.0.0.1:$BackendPort/api/repos" -TimeoutSec 5
-    $demoRepository = $demoRepositories | Where-Object { $_.full_name -eq "course-demo/devharbor-sample-api" } | Select-Object -First 1
+    $demoRepository = $demoRepositories | Where-Object { $_.full_name -eq "devharbor-demo/devharbor-sample-api" } | Select-Object -First 1
     if (-not $demoRepository) {
         throw "没有找到初始化后的演示仓库。"
     }
@@ -101,7 +112,7 @@ try {
 
     $frontendProcess = Start-Process `
         -FilePath "npm.cmd" `
-        -ArgumentList @("run", "dev", "--", "-p", "$FrontendPort") `
+        -ArgumentList @("run", "dev", "--", "--hostname", "127.0.0.1", "-p", "$FrontendPort") `
         -WorkingDirectory $frontendDirectory `
         -RedirectStandardOutput $frontendOutputLog `
         -RedirectStandardError $frontendErrorLog `
@@ -131,15 +142,27 @@ try {
     Write-Host "  后端：http://127.0.0.1:$BackendPort"
     Write-Host "  后端 PID：$($backendProcess.Id)"
     Write-Host "  前端 PID：$($frontendProcess.Id)"
-    Write-Host "  停止命令：Stop-Process -Id $($backendProcess.Id),$($frontendProcess.Id)"
+    Write-Host "  停止后端：taskkill /PID $($backendProcess.Id) /T /F"
+    Write-Host "  停止前端：taskkill /PID $($frontendProcess.Id) /T /F"
     Write-Host "说明：该脚本关闭 Milvus并停用演示库的分数阈值，只用于页面、结构化数据和关键词检索演示；向量检索状态会显示 degraded。"
 }
 catch {
     if ($frontendProcess -and -not $frontendProcess.HasExited) {
-        Stop-Process -Id $frontendProcess.Id
+        taskkill.exe /PID $frontendProcess.Id /T /F | Out-Null
     }
     if ($backendProcess -and -not $backendProcess.HasExited) {
-        Stop-Process -Id $backendProcess.Id
+        taskkill.exe /PID $backendProcess.Id /T /F | Out-Null
     }
     throw
+}
+finally {
+    # Child processes keep their launch environment; restore the caller's shell
+    # so a later -UseConfiguredLLM run can load the original configuration.
+    foreach ($name in $demoEnvironmentNames) {
+        if ($null -eq $previousDemoEnvironment[$name]) {
+            Remove-Item -LiteralPath "Env:$name" -ErrorAction SilentlyContinue
+        } else {
+            [Environment]::SetEnvironmentVariable($name, $previousDemoEnvironment[$name], "Process")
+        }
+    }
 }

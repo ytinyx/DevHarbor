@@ -31,7 +31,7 @@ import {
   XCircle,
   type LucideIcon
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 
 import { apiDelete, apiGet, apiPost, apiPostStream, apiUpload } from "@/lib/api";
 import type { Repository } from "@/lib/types";
@@ -972,7 +972,7 @@ export default function DashboardPage() {
   const selectedPromptState = selectedRepo ? promptStateByRepo[selectedRepo.id] : undefined;
   const selectedProjectIndexState = selectedRepo ? projectIndexByRepo[selectedRepo.id] : undefined;
   const selectedKnowledgeGraph = selectedRepo ? knowledgeGraphByRepo[selectedRepo.id] : null;
-  const promptSuggestions = selectedPromptState?.suggestions ?? [];
+  const promptSuggestions = useMemo(() => selectedPromptState?.suggestions ?? [], [selectedPromptState?.suggestions]);
   const promptExclude = selectedPromptState?.exclude ?? [];
   const loadingPrompts = Boolean(selectedRepo?.id && loadingPromptRepoId === selectedRepo.id);
 
@@ -4840,7 +4840,7 @@ function MemoryHubWorkspace({
     (item) => item.source_type !== "memory_note" && item.source_type !== "team_member"
   );
 
-  async function loadRecallEvents() {
+  const loadRecallEvents = useCallback(async () => {
     if (!repoId) return;
     setLoadingPanel("recall");
     setError(null);
@@ -4851,9 +4851,9 @@ function MemoryHubWorkspace({
     } finally {
       setLoadingPanel((current) => (current === "recall" ? null : current));
     }
-  }
+  }, [repoId]);
 
-  async function loadMemoryStatus() {
+  const loadMemoryStatus = useCallback(async () => {
     if (!repoId) return;
     setLoadingPanel("status");
     setError(null);
@@ -4864,9 +4864,9 @@ function MemoryHubWorkspace({
     } finally {
       setLoadingPanel((current) => (current === "status" ? null : current));
     }
-  }
+  }, [repoId]);
 
-  async function loadCandidates(status = "pending") {
+  const loadCandidates = useCallback(async (status = "pending") => {
     if (!repoId) return;
     setLoadingPanel("review");
     setError(null);
@@ -4877,7 +4877,7 @@ function MemoryHubWorkspace({
     } finally {
       setLoadingPanel((current) => (current === "review" ? null : current));
     }
-  }
+  }, [repoId]);
 
   async function runMemorySearch() {
     if (!repoId || !searchQuery.trim()) return;
@@ -4930,7 +4930,7 @@ function MemoryHubWorkspace({
     loadRecallEvents();
     loadMemoryStatus();
     loadCandidates();
-  }, [repoId]);
+  }, [repoId, loadRecallEvents, loadMemoryStatus, loadCandidates]);
 
   const tabs = [
     { id: "recall", label: "召回记录" },
@@ -5394,8 +5394,8 @@ function KnowledgeGraphWorkspace({
   onFocusNode: (node: KnowledgeGraphNode) => void;
   onOpenNode: (node: KnowledgeGraphNode) => void;
 }) {
-  const allNodes = graph?.nodes ?? [];
-  const allEdges = graph?.edges ?? [];
+  const allNodes = useMemo(() => graph?.nodes ?? [], [graph?.nodes]);
+  const allEdges = useMemo(() => graph?.edges ?? [], [graph?.edges]);
   const nodeByKey = useMemo(() => new Map(allNodes.map((node) => [knowledgeGraphNodeKey(node), node])), [allNodes]);
   const nodeTypes = useMemo(() => [...new Set(allNodes.map((node) => node.type))], [allNodes]);
   const relations = useMemo(() => [...new Set(allEdges.map((edge) => edge.relation))], [allEdges]);
