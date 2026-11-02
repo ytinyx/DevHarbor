@@ -1,18 +1,88 @@
-# Agent 工作流
+# 对话与工程工作流
 
-用户消息进入 `/api/chat` 后：
+[返回首页](../../README.md) · [系统架构](system_design.md) · [RAG 流水线](rag_pipeline.md) · [安全边界](security.md)
 
-1. `ChatAgent` 使用原生工具调用能力选择下一步要使用的工具。
-2. 工作区工具可以列出文件、读取文件以及搜索本地代码。
-3. 记忆工具用于检索当前范围内的对话历史。RAG 用于检索可复用的非结构化证据，例如 Issue 描述、PR 讨论、失败的 CI 日志、项目文档、用户上传的知识以及经过确认的记忆笔记。工作区工具和结构化工具则负责处理当前代码与实时事实。
-4. 专项 Agent 分别执行 Issue、PR、CI、报告或安全分析。
-5. `SafetyAgent` 负责处理对外写入意图，只生成操作草稿；用户调用草稿确认接口后，后端会执行受支持的 GitHub 写入。具体行为与当前演示鉴权限制见 [安全与使用边界](security.md)。
-6. 后端记录工具调用、引用来源、最终回答以及持久化的聊天记忆。
+DevHarbor 有两层控制流：`ChatAgent` 用模型的工具调用能力逐步取证；`WorkflowOrchestrator` 在需要跨领域分析时执行一个有边界的任务图。两层共享专项工具，但职责和执行方式不同。
 
-对于涉及多个领域的工程决策，`ChatAgent` 可以调用 `workflow.run_engineering_review`：
+![细粒度工程工作流：规则规划、依赖调度、任务执行、观察与有限重规划](../assets/agent-workflow.svg)
 
-1. `PlannerAgent` 创建一个边界明确的 `WorkflowSpec`，其中包含任务声明、依赖关系和验收标准。
-2. `WorkflowOrchestrator` 在依赖条件满足时，并行执行已经就绪的任务。
-3. 现有的 Issue、PR、CI、RAG、仓库健康检查和安全能力会作为工作流任务执行。
-4. `ObserverAgent` 检查任务输出中的合并门禁、跨 Agent 冲突、低置信度、证据缺失以及需要人工确认的事项。
-5. `SynthesisAgent` 生成一份统一的决策备忘录，后端同时持久化 `AgentWorkflowRun` 和 `AgentTaskRun` 记录，以便后续追踪和审查。
+*架构示意图。Planner / Observer / Synthesis 为规则与结构化逻辑；图中并行关系表示依赖满足后的调度机会，不表示所有任务一定同时执行。*
+
+## 1. 请求进入模型之前
+
+[`api/routes/chat.py`](../../backend/app/api/routes/chat.py) 接收仓库与会话范围，依次完成：
+
+| 阶段 | 小模块 | 处理结果 |
+| --- | --- | --- |
+| 范围解析 | `_repo_or_404`、`ensure_conversation` | 确定当前仓库与会话，避免只依赖模型传入的范围 |
+| 空间预留 | `ProgressiveContextManager.ensure_headroom` | 根据上下文压力决定是否压缩；记录压缩边界与恢复线索 |
+| 保存原始输入 | `MessageStore.append` | 保存用户消息，保留可追溯原文 |
+| 更新证据投影 | `EvidenceStore.rebuild_repo` | 准备当前范围可读取的项目、历史与记忆证据 |
+| 组装输入 | `ContextAssembler.assemble` | 合并系统信息、结构化记忆、会话摘要、近期消息和预检索证据 |
+| 工具与 Skill | `_build_conversation_tools`、`SkillRegistry` | 绑定服务端工具、激活 Skill 并注入本次需要的指令 |
+
+原始问题先用于一次预检索；进入模型循环后，模型仍可改写查询、多次调用检索工具。近期历史和项目概览也有专门的快速路径，不必每次都完整经过通用工具循环。
+
+## 2. ChatAgent：模型决策与工具观察
+
+实现位于 [`chat_agent.py`](../../backend/app/services/agents/chat_agent.py)。`ChatOpenAI` 绑定 `StructuredTool`，LangGraph 维护三个控制节点：
+
+| 节点 | 输入 | 后继 |
+| --- | --- | --- |
+| `model_decision` | 当前消息、上下文、已有工具观察 | 有 tool calls → `tool_action`；已有最终回答 → 结束 |
+| `tool_action` | 一个待执行的工具调用 | 有剩余 tool calls → 继续执行；否则回到模型或检查步数上限 |
+| `max_steps_stop` | 已完成的工具结果 | 返回预算耗尽说明，结束本轮 |
+
+执行工具前会规范化名称与参数，检查显式 Skill 的工具边界；执行后记录 `tool_use`、`tool_result`、观察与引用。可恢复的部分异常会触发有限重试；未知工具、权限问题和一般执行失败都保留结构化错误类型。
+
+当前代码设置 `max_steps = 12`、同一工具调用重复上限为 `2`，可重试异常最多额外尝试 `1` 次。它们是控制预算，不是性能承诺。工具执行和模型调用失败时可返回降级回答，使用者应同时检查 `completion` 与工具事件，不能只看是否有回答文本。
+
+## 3. 工具分组与证据去向
+
+| 工具 | 实际读取或产生的内容 |
+| --- | --- |
+| `workspace.list_files` / `read_file` / `search_code` | 当前仓库工作区中的文件与词法匹配，不通过向量召回猜测源码 |
+| `devharbor_search_evidence` | 通过 stdio MCP 检索当前范围内的证据 |
+| `devharbor_get_thread_context` | 通过 stdio MCP 读取会话上下文与原始消息 |
+| `devharbor_read_session_events` | 通过 stdio MCP 读取封存会话的事件与 transcript |
+| `rag.search_similar_documents` | 历史 Issue / PR / 失败日志 / 文档等候选证据；见 [RAG 两类入口](rag_pipeline.md) |
+| `repo_health.generate_summary` | 从同步快照汇总仓库健康信息 |
+| `issue_agent.analyze_issue` | 分类、优先级、复杂度、负责人建议、重复候选和行动项 |
+| `pr_review_agent.analyze_pr` | 基于 diff 等输入的摘要、风险、分级问题和测试建议 |
+| `ci_debug_agent.analyze_workflow_run` | 失败类型、可能根因、排查步骤和门禁判断 |
+| `report_agent.generate_weekly_report` | 指定窗口内的工作总结 |
+| `safety_agent.classify_action_risk` | 风险判断与操作草稿，不在此直接执行 GitHub 写入 |
+| `workflow.run_engineering_review` | 进入下述跨领域工程工作流 |
+
+## 4. 工程工作流：从计划到报告
+
+1. **规则规划。** `PlannerAgent` 根据目标文字、可用 Issue / PR / CI、是否需要历史证据与写入审查，构造 `WorkflowSpec`。每项任务包含 `task_type`、目标、`claim`、依赖和输入提示。
+2. **依赖检查。** 调度器维护 `pending`、成功结果和失败依赖集合；已成功的任务在重规划后可复用。依赖失败的任务标为 `skipped`；缺失依赖或环导致无法推进时记录错误。
+3. **有界执行。** 只选择依赖全部成功的任务，以 `max_parallel_tasks` 为批次上限，通过 `asyncio.gather` 执行。每个任务由 `asyncio.wait_for` 施加超时；结果统一为 `WorkflowTaskResult`。
+4. **规则观察。** `ObserverAgent` 汇总失败/跳过、证据缺失、低置信度、CI 门禁、PR 阻塞项、跨 Agent 冲突及人工确认需求。
+5. **有限重规划。** 对可修复发现调用 `PlannerAgent.replan`；默认最多一次，参数限制最多两次，计划没有改变时终止。这里是补充或调整任务图，不保证问题一定修复。
+6. **结构化综合。** `SynthesisAgent` 保留阻塞项和观察结论，生成决策、依据与下一步。
+7. **持久化。** 保存 `AgentWorkflowRun` 和 `AgentTaskRun`，记录目标、规格、各任务输入输出、状态与耗时等指标。
+
+典型依赖是 `repo_health → PR / Issue / CI / RAG`；是否创建某条分支取决于目标和可用数据。安全审查在有写入意图时被选入。**工作流计划中的 `claim` 用于明确任务范围，不替代服务端鉴权或进程隔离。**
+
+计划还可经 `/api/chat/plan` 展示，再由 `/api/chat/plan/execute/stream` 执行。这是工作流计划入口，与 GitHub 操作草稿的确认入口不同。
+
+## 5. 回答与记忆的闭环
+
+回答结束后保存 assistant 消息与 `AgentRun`。`SessionSealer` 将本轮 transcript、工具事件和摘要封存为 `ChatSession`，更新结构化记忆，并可捕获待审核的记忆候选。压缩后仍保留原始记录和恢复工具线索；压缩摘要不能替代原始证据。
+
+`ConversationMemory` 面向具体会话，`ThreadMemory` 保留仓库范围的兼容路径。长期记忆候选进入检索知识前需要相应确认流程；普通聊天历史和会话摘要不作为所有查询都可召回的向量文档。
+
+## 6. 写入路径与使用边界
+
+模型分析只生成建议或草稿。`POST /api/action-drafts/{draft_id}/confirm` 才会执行支持的 GitHub 操作，成功记录 `executed`，异常记录 `failed`，并保存审计信息。当前演示权限通过本地演示用户解析，尚未实现真实登录；**人工确认流程不等于生产级身份认证**。详见[安全与使用边界](security.md)。
+
+## 对照实现与回归测试
+
+| 行为 | 代码或测试 |
+| --- | --- |
+| 工具循环、事件、预算与错误 | [`chat_agent.py`](../../backend/app/services/agents/chat_agent.py)、[`test_chat_agent.py`](../../backend/app/tests/test_chat_agent.py) |
+| 计划、依赖、观察与重规划 | [`workflow_orchestrator.py`](../../backend/app/services/agents/workflow_orchestrator.py)、[`test_workflow_orchestrator.py`](../../backend/app/tests/test_workflow_orchestrator.py) |
+| Skill 载入与约束 | [`registry.py`](../../backend/app/services/skills/registry.py)、[`test_skill_registry.py`](../../backend/app/tests/test_skill_registry.py) |
+| 上下文压缩与证据投影 | [`chat_memory.py`](../../backend/app/services/chat_memory.py)、[`test_context_compression.py`](../../backend/app/tests/test_context_compression.py)、[`test_context_memory_projection.py`](../../backend/app/tests/test_context_memory_projection.py) |

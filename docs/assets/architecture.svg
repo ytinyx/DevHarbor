@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1390" viewBox="0 0 1400 1390" role="img" aria-labelledby="title desc">
+<title id="title">系统地图 · 从上下文到工程行动</title><desc id="desc">细分调用入口、Agent 工具与证据存储；每个数据域都保留明确的来源。</desc>
+<defs>
+ <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#087f8c" stroke-width="1.5"/></marker>
+ <marker id="muted-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#8aa2b6" stroke-width="1.5"/></marker>
+ <marker id="amber-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#aa6421" stroke-width="1.5"/></marker>
+ <linearGradient id="header" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#10243b"/><stop offset="1" stop-color="#173d54"/></linearGradient>
+</defs>
+<rect width="1400" height="1390" fill="#f5f8fc"/>
+<rect width="1400" height="174" fill="url(#header)"/>
+<path d="M0 173 H1400" stroke="#35bec1" stroke-width="3"/>
+<g font-family="'Segoe UI','Microsoft YaHei','PingFang SC',Arial,sans-serif">
+<text x="64" y="43" font-size="13" font-weight="650" text-anchor="start" fill="#87d9dc" letter-spacing="2">DEVHARBOR  /  ENGINEERING NOTES</text>
+<text x="64" y="93" font-size="32" font-weight="700" text-anchor="start" fill="#ffffff">系统地图 · 从上下文到工程行动</text>
+<text x="64" y="133" font-size="17" font-weight="400" text-anchor="start" fill="#c4d9e6">细分调用入口、Agent 工具与证据存储；每个数据域都保留明确的来源。</text>
+<rect x="64" y="196" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="white">01</text>
+<text x="105" y="216" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">请求入口与对话主链</text>
+<text x="1336" y="216" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">Next.js → FastAPI → context → model/tools</text>
+<rect x="64" y="248" width="224" height="90" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M79 268 V318" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="282" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">Next.js 工作台</text>
+<text x="94" y="308" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">对话 · 知识库 · PR / CI</text>
+<rect x="326" y="248" width="224" height="90" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M341 268 V318" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="282" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">FastAPI 路由</text>
+<text x="356" y="308" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">请求校验 · 仓库 / 会话范围</text>
+<rect x="588" y="248" width="224" height="90" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M603 268 V318" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="282" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">ContextAssembler</text>
+<text x="618" y="308" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">历史 · 记忆 · 预检索证据</text>
+<rect x="850" y="248" width="224" height="90" rx="12" fill="#10243b" stroke="#10243b"/>
+<path d="M865 268 V318" stroke="#51d0ce" stroke-width="3" stroke-linecap="round"/>
+<text x="880" y="282" font-size="20" font-weight="650" text-anchor="start" fill="white">ChatAgent</text>
+<text x="880" y="308" font-size="14" font-weight="400" text-anchor="start" fill="#bfd7e5">LangGraph · model ↔ tools</text>
+<rect x="1112" y="248" width="224" height="90" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M1127 268 V318" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="1142" y="282" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">LLM 接口</text>
+<text x="1142" y="308" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">OpenAI-compatible API</text>
+<path d="M288 293.0 L326 293.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M550 293.0 L588 293.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M812 293.0 L850 293.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1074 293.0 L1112 293.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="385" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="404" font-size="13" font-weight="700" text-anchor="middle" fill="white">02</text>
+<text x="105" y="405" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">上下文与运行约束</text>
+<text x="1336" y="405" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">虚线表示对主链的支撑</text>
+<rect x="64" y="437" width="224" height="90" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M79 457 V507" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="471" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">仓库 / 会话定位</text>
+<text x="94" y="497" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">repo_id · conversation_id</text>
+<rect x="326" y="437" width="224" height="90" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M341 457 V507" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="471" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">上下文预算管理</text>
+<text x="356" y="497" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">压缩历史 · 保留近期消息</text>
+<rect x="588" y="437" width="224" height="90" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M603 457 V507" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="471" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">消息与证据投影</text>
+<text x="618" y="497" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">MessageStore / EvidenceStore</text>
+<rect x="850" y="437" width="224" height="90" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M865 457 V507" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="880" y="471" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">SkillRegistry</text>
+<text x="880" y="497" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">按需激活 · 工具白名单</text>
+<rect x="1112" y="437" width="224" height="90" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M1127 457 V507" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="1142" y="471" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">流事件与轨迹</text>
+<text x="1142" y="497" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">SSE · 工具事件 · 引用</text>
+<path d="M176 437 L176 371 L438 371 L438 338" fill="none" stroke="#8aa2b6" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#muted-arrow)"/>
+<rect x="282.0" y="349" width="44" height="24" rx="4" fill="#f5f8fc" stroke="none"/>
+<text x="304" y="366" font-size="14" font-weight="400" text-anchor="middle" fill="#8aa2b6">范围</text>
+<path d="M438 437 L438 391 L644 391 L644 338" fill="none" stroke="#8aa2b6" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#muted-arrow)"/>
+<rect x="511.0" y="369" width="44" height="24" rx="4" fill="#f5f8fc" stroke="none"/>
+<text x="533" y="386" font-size="14" font-weight="400" text-anchor="middle" fill="#8aa2b6">预算</text>
+<path d="M700.0 437 L700.0 338" fill="none" stroke="#8aa2b6" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#muted-arrow)"/>
+<path d="M962.0 437 L962.0 338" fill="none" stroke="#8aa2b6" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#muted-arrow)"/>
+<path d="M1074 293 L1093 293 L1093 411 L1224 411 L1224 437" fill="none" stroke="#8aa2b6" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#muted-arrow)"/>
+<rect x="64" y="576" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="595" font-size="13" font-weight="700" text-anchor="middle" fill="white">03</text>
+<text x="105" y="596" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">注册工具与专题能力</text>
+<text x="1336" y="596" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">工具选择由模型决策；工程工作流另有依赖调度</text>
+<rect x="64" y="644" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M79 664 V736" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="678" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">工作区工具</text>
+<text x="94" y="704" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">list_files · read_file</text>
+<text x="94" y="724" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">search_code</text>
+<rect x="326" y="644" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M341 664 V736" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="678" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">MCP 记忆工具</text>
+<text x="356" y="704" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">devharbor_*</text>
+<text x="356" y="724" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">stdio memory server</text>
+<rect x="588" y="644" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M603 664 V736" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="678" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">RAG 检索工具</text>
+<text x="618" y="704" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">search_similar_documents</text>
+<text x="618" y="724" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">候选证据与来源</text>
+<rect x="850" y="644" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M865 664 V736" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="880" y="678" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">专题分析 Agent</text>
+<text x="880" y="704" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">Issue · PR · CI</text>
+<text x="880" y="724" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">Report · Safety</text>
+<rect x="1112" y="644" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M1127 664 V736" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="1142" y="678" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">工程工作流</text>
+<text x="1142" y="704" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">Planner · Observer</text>
+<text x="1142" y="724" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">Synthesis · 任务运行记录</text>
+<path d="M900 338 L900 365 L830 365 L830 567 L1380 567 L1380 621 L176 621" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round"/>
+<path d="M176 621 L176 644" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M438 621 L438 644" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M700 621 L700 644" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M962 621 L962 644" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1224 621 L1224 644" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="799" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="818" font-size="13" font-weight="700" text-anchor="middle" fill="white">04</text>
+<text x="105" y="819" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">证据与持久化</text>
+<text x="1336" y="819" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">PostgreSQL 框代表同一关系库中的不同逻辑数据组</text>
+<rect x="64" y="851" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M79 871 V943" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="885" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">当前 checkout</text>
+<text x="94" y="911" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">本地仓库 · 隔离工作树</text>
+<text x="94" y="931" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">路径校验后的只读检索</text>
+<rect x="326" y="851" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M341 871 V943" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="885" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">对话 / 长期记忆</text>
+<text x="356" y="911" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">PostgreSQL</text>
+<text x="356" y="931" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">会话、消息、批准的笔记</text>
+<rect x="588" y="851" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M603 871 V943" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="885" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">文档 / 向量</text>
+<text x="618" y="911" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">PostgreSQL Document</text>
+<text x="618" y="931" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">Milvus · repo_id 隔离</text>
+<rect x="850" y="851" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M865 871 V943" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="880" y="885" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">GitHub 同步快照</text>
+<text x="880" y="911" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">Issue / PR / CI · SQL</text>
+<text x="880" y="931" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">GitHub REST API</text>
+<rect x="1112" y="851" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M1127 871 V943" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="1142" y="885" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">运行 / 任务记录</text>
+<text x="1142" y="911" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">PostgreSQL</text>
+<text x="1142" y="931" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">AgentWorkflowRun / TaskRun</text>
+<path d="M176.0 756 L176.0 851" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M438.0 756 L438.0 851" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M700.0 756 L700.0 851" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M962.0 756 L962.0 851" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1224.0 756 L1224.0 851" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="1008" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="1027" font-size="13" font-weight="700" text-anchor="middle" fill="white">05</text>
+<text x="105" y="1028" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">写入动作的确认链</text>
+<text x="1336" y="1028" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">Agent 生成草稿；人工确认接口执行真实 GitHub 写入</text>
+<rect x="64" y="1060" width="224" height="90" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M79 1080 V1130" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="1094" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">SafetyAgent</text>
+<text x="94" y="1120" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">把写意图变成结构化草稿</text>
+<rect x="326" y="1060" width="224" height="90" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M341 1080 V1130" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="1094" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">ActionDraft</text>
+<text x="356" y="1120" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">保存待确认的操作参数</text>
+<rect x="588" y="1060" width="224" height="90" rx="12" fill="#fff6e9" stroke="#e6c9a5"/>
+<path d="M603 1080 V1130" stroke="#aa6421" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="1094" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">人工确认 API</text>
+<text x="618" y="1120" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">用户显式确认草稿</text>
+<rect x="850" y="1060" width="224" height="90" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M865 1080 V1130" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="880" y="1094" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">权限校验</text>
+<text x="880" y="1120" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">支持的动作 · 演示角色权限</text>
+<rect x="1112" y="1060" width="224" height="90" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M1127 1080 V1130" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="1142" y="1094" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">执行与审计</text>
+<text x="1142" y="1120" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">GitHub REST → AuditLog</text>
+<path d="M288 1105.0 L326 1105.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M550 1105.0 L588 1105.0" fill="none" stroke="#aa6421" stroke-width="2" stroke-linejoin="round" marker-end="url(#amber-arrow)"/>
+<path d="M812 1105.0 L850 1105.0" fill="none" stroke="#aa6421" stroke-width="2" stroke-linejoin="round" marker-end="url(#amber-arrow)"/>
+<path d="M1074 1105.0 L1112 1105.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="1186" width="1272" height="96" rx="12" fill="#fff6e9" stroke="#ecd6b9"/>
+<text x="86" y="1215" font-size="17" font-weight="650" text-anchor="start" fill="#aa6421">当前使用边界</text>
+<text x="86" y="1241" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">当前版本面向本地 / 可信内网单用户演示，未实现用户登录认证；DEMO_MODE 不会阻止已确认草稿的 GitHub 写入。</text>
+<text x="86" y="1264" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">工作区代码走当前 checkout 工具；RAG 承载可复用的非结构化证据。图示为代码架构说明，不是产品界面截图。</text>
+<rect x="58" y="192" width="244" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="1001.0" y="195" width="343.0" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="64" y="196" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="white">01</text>
+<text x="105" y="216" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">请求入口与对话主链</text>
+<text x="1336" y="216" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">Next.js → FastAPI → context → model/tools</text>
+<rect x="58" y="381" width="223" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="1188" y="384" width="156" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="64" y="385" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="404" font-size="13" font-weight="700" text-anchor="middle" fill="white">02</text>
+<text x="105" y="405" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">上下文与运行约束</text>
+<text x="1336" y="405" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">虚线表示对主链的支撑</text>
+<rect x="58" y="572" width="244" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="1034" y="575" width="310" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="64" y="576" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="595" font-size="13" font-weight="700" text-anchor="middle" fill="white">03</text>
+<text x="105" y="596" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">注册工具与专题能力</text>
+<text x="1336" y="596" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">工具选择由模型决策；工程工作流另有依赖调度</text>
+<rect x="58" y="795" width="181" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="1007.5" y="798" width="336.5" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="64" y="799" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="818" font-size="13" font-weight="700" text-anchor="middle" fill="white">04</text>
+<text x="105" y="819" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">证据与持久化</text>
+<text x="1336" y="819" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">PostgreSQL 框代表同一关系库中的不同逻辑数据组</text>
+<rect x="58" y="1004" width="223" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="985.0" y="1007" width="359.0" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="64" y="1008" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="1027" font-size="13" font-weight="700" text-anchor="middle" fill="white">05</text>
+<text x="105" y="1028" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">写入动作的确认链</text>
+<text x="1336" y="1028" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">Agent 生成草稿；人工确认接口执行真实 GitHub 写入</text>
+<path d="M64 1328 L116 1328" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="126" y="1333" font-size="13" font-weight="400" text-anchor="start" fill="#5c7185">主流程 / 数据流</text>
+<path d="M326 1328 L378 1328" fill="none" stroke="#8aa2b6" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#muted-arrow)"/>
+<text x="388" y="1333" font-size="13" font-weight="400" text-anchor="start" fill="#5c7185">支撑关系 / 按需分支</text>
+<path d="M632 1328 L684 1328" fill="none" stroke="#aa6421" stroke-width="2" stroke-linejoin="round" marker-end="url(#amber-arrow)"/>
+<text x="694" y="1333" font-size="13" font-weight="400" text-anchor="start" fill="#5c7185">异常 / 重规划 / 人工关口</text>
+<text x="1336" y="1333" font-size="12" font-weight="400" text-anchor="end" fill="#5c7185" letter-spacing="1">CODE-ALIGNED  ·  EDITABLE SVG</text>
+</g></svg>
