@@ -2,15 +2,15 @@
 flowchart TD
   upload["文件上传<br/>TXT / MD / PDF / DOCX 等"]
   hash["SHA-256 去重<br/>同仓库识别重复文件"]
-  queued["入库任务登记<br/>KnowledgeSourceDocument · queued → parsing"]
+  queued["后台入库登记<br/>KnowledgeSourceDocument · BackgroundTasks · 进程内 · queued → parsing"]
   parse["格式提取<br/>提取文本与文档结构"]
   split["结构感知切片<br/>父子块 · 标题 · 来源元数据"]
   upload --> hash
   hash --> queued
   queued --> parse
   parse --> split
-  state["完成 / 失败状态<br/>completed / failed · 保留处理阶段与错误"]
-  milvus["Milvus 向量索引<br/>repo_id · source_id · 检索与删除使用作用域"]
+  state["处理结果状态<br/>completed / failed · 完成不代表向量就绪"]
+  milvus["Milvus 向量写入<br/>仅 MILVUS_ENABLED=true · repo_id · source_id"]
   sql["Document 关系表<br/>正文 · 切片 · 来源元数据"]
   embed["批量 Embedding<br/>固定 provider / model / dims · 分批向量化"]
   normalize["片段准备<br/>父文档关联 · 内容规范化"]
@@ -19,6 +19,7 @@ flowchart TD
   embed --> sql
   sql --> milvus
   milvus --> state
+  sql -.->|未启用 Milvus：跳过写入| state
   scope["问题与检索范围<br/>repo_id · source_types · metadata filters"]
   query["Query Embedding<br/>使用知识库向量配置"]
   vector["Milvus 召回<br/>向量相似度候选"]

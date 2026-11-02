@@ -16,7 +16,7 @@
 <rect x="64" y="196" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
 <text x="78" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="white">01</text>
 <text x="105" y="216" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">文档入库</text>
-<text x="1336" y="216" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">文件内容、切片版本、Embedding 配置与处理状态可追踪</text>
+<text x="1336" y="216" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">进程内 BackgroundTasks；无持久队列或自动恢复</text>
 <rect x="64" y="250" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
 <path d="M79 270 V342" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
 <text x="94" y="284" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">文件上传</text>
@@ -27,9 +27,10 @@
 <text x="356" y="310" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">同仓库识别重复文件</text>
 <rect x="588" y="250" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
 <path d="M603 270 V342" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
-<text x="618" y="284" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">入库任务登记</text>
+<text x="618" y="284" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">后台入库登记</text>
 <text x="618" y="310" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">KnowledgeSourceDocument</text>
-<text x="618" y="330" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">queued → parsing</text>
+<text x="618" y="330" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">BackgroundTasks · 进程内</text>
+<text x="618" y="350" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">queued → parsing</text>
 <rect x="850" y="250" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
 <path d="M865 270 V342" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
 <text x="880" y="284" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">格式提取</text>
@@ -44,14 +45,14 @@
 <path d="M1074 306.0 L1112 306.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <rect x="64" y="430" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
 <path d="M79 450 V522" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
-<text x="94" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">完成 / 失败状态</text>
+<text x="94" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">处理结果状态</text>
 <text x="94" y="490" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">completed / failed</text>
-<text x="94" y="510" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">保留处理阶段与错误</text>
+<text x="94" y="510" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">完成不代表向量就绪</text>
 <rect x="326" y="430" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
 <path d="M341 450 V522" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
-<text x="356" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">Milvus 向量索引</text>
-<text x="356" y="490" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">repo_id · source_id</text>
-<text x="356" y="510" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">检索与删除使用作用域</text>
+<text x="356" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">Milvus 向量写入</text>
+<text x="356" y="490" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">仅 MILVUS_ENABLED=true</text>
+<text x="356" y="510" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">repo_id · source_id</text>
 <rect x="588" y="430" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
 <path d="M603 450 V522" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
 <text x="618" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">Document 关系表</text>
@@ -70,6 +71,9 @@
 <path d="M850 486.0 L812 486.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <path d="M588 486.0 L550 486.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <path d="M326 486.0 L288 486.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M700 542 L700 562 L176 562 L176 542" fill="none" stroke="#8aa2b6" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#muted-arrow)"/>
+<rect x="347.75" y="546" width="180.5" height="24" rx="4" fill="#f5f8fc" stroke="none"/>
+<text x="438" y="563" font-size="14" font-weight="400" text-anchor="middle" fill="#8aa2b6">未启用 Milvus：跳过写入</text>
 <rect x="64" y="577" width="1272" height="98" rx="12" fill="#eef4ff" stroke="#d2def0"/>
 <text x="86" y="606" font-size="17" font-weight="650" text-anchor="start" fill="#4267b2">另一条入库入口：GitHub 同步</text>
 <text x="86" y="632" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">Issue 正文、PR 说明 / Review 评论、失败 CI 日志 → 来源白名单（CI 日志脱敏）→ Document / Milvus。</text>
@@ -188,11 +192,11 @@
 <text x="86" y="1798" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">ChatAgent 工具：search_similar_documents → 混合召回、去重、启发式重排与压缩 → 模型继续使用工具验证证据。</text>
 <text x="86" y="1821" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">deterministic embedding 与关闭 Milvus 的本地演示可验证流程，不代表真实语义召回质量或完整混合检索已通过验证。</text>
 <rect x="58" y="192" width="139" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
-<rect x="973.0" y="195" width="371.0" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="1012.0" y="195" width="332.0" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
 <rect x="64" y="196" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
 <text x="78" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="white">01</text>
 <text x="105" y="216" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">文档入库</text>
-<text x="1336" y="216" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">文件内容、切片版本、Embedding 配置与处理状态可追踪</text>
+<text x="1336" y="216" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">进程内 BackgroundTasks；无持久队列或自动恢复</text>
 <rect x="58" y="711" width="244" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
 <rect x="973.5" y="714" width="370.5" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
 <rect x="64" y="715" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>

@@ -37,7 +37,7 @@ flowchart TD
   replan --> synthesis
   synthesis --> report
   replan -->|新增任务，复用成功结果| planner
-  persist["持久化运行轨迹<br/>AgentWorkflowRun · AgentTaskRun"]
+  persist["报告后的结果记录<br/>AgentWorkflowRun · AgentTaskRun · flush → 外层事务 commit"]
   report --> persist
   blocked["依赖失败 → skipped<br/>后继任务被失败依赖阻断"]
   cycle["无可执行任务 → error<br/>循环或缺失依赖"]

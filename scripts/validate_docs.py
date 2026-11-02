@@ -252,7 +252,7 @@ def validate(root: Path) -> tuple[list[str], dict[str, int]]:
     root = root.resolve()
     errors = []
     counts = {"markdown": 0, "local_links": 0, "external_links_skipped": 0, "svg": 0, "bitmaps": 0}
-    markdown = [root / name for name in ("README.md", "SECURITY.md", "VERSIONS.md")]
+    markdown = [root / name for name in ("README.md", "ARCHITECTURE.md", "SECURITY.md", "VERSIONS.md")]
     markdown += sorted((root / "docs").rglob("*.md"))
     texts, anchors = {}, {}
     for path in markdown:

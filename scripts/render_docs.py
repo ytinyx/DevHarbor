@@ -198,7 +198,7 @@ def architecture():
 
 
 def workflow():
-    c = Canvas("agent-workflow","工程工作流 · 规划、执行、观察与综合","依赖图按就绪批次执行；失败、有限重规划与最终证据都进入可追溯的运行记录。",1436)
+    c = Canvas("agent-workflow","工程工作流 · 规划、执行、观察与综合","依赖图按就绪批次执行；报告生成后记录任务结果，最终随请求事务提交。",1436)
     c.section(216,"01","建立任务图","Planner / Observer / Synthesis 使用规则与结构化逻辑")
     xs=[64,394,724,1054]
     row=[("entry","ChatAgent 工具入口","workflow.run_engineering_review"),("planner","规则规划 Planner","目标 · 范围 · 验收标准"),("spec","WorkflowSpec","小任务 · dependencies\nmax_parallel_tasks / timeout"),("ready","依赖就绪筛选","成功依赖已完成 → ready")]
@@ -225,7 +225,7 @@ def workflow():
     c.relate("results","observer",[(205,567),(205,597),(38,597),(38,897),(64,897)],label="本轮结果",label_at=(99,779))
     for a,b in [("observer","replan"),("replan","synthesis"),("synthesis","report")]: c.edge(a,b)
     c.relate("replan","planner",[(535,953),(535,993),(20,993),(20,229),(535,229),(535,250)],"新增任务，复用成功结果",(255,988),amber=True)
-    c.node("persist",1054,1025,"持久化运行轨迹","AgentWorkflowRun\nAgentTaskRun",w=282,h=112,tone="dark")
+    c.node("persist",1054,1025,"报告后的结果记录","AgentWorkflowRun\nAgentTaskRun\nflush → 外层事务 commit",w=282,h=112,tone="dark")
     c.edge("report","persist","down")
     # This is a magnified explanation of the result collector above, not an
     # independent stage. A local reference avoids a long edge through the graph.
@@ -258,14 +258,15 @@ def workflow():
 
 def rag():
     c = Canvas("rag-pipeline","RAG 流水线 · 入库、混合召回与证据门控","本图的完整问答链对应知识库问答与检索实验；ChatAgent 检索工具有单独的轻量路径。",1960)
-    c.section(216,"01","文档入库","文件内容、切片版本、Embedding 配置与处理状态可追踪")
-    row=[("upload",64,"文件上传","TXT / MD / PDF / DOCX 等"),("hash",326,"SHA-256 去重","同仓库识别重复文件"),("queued",588,"入库任务登记","KnowledgeSourceDocument\nqueued → parsing"),("parse",850,"格式提取","提取文本与文档结构"),("split",1112,"结构感知切片","父子块 · 标题 · 来源元数据")]
+    c.section(216,"01","文档入库","进程内 BackgroundTasks；无持久队列或自动恢复")
+    row=[("upload",64,"文件上传","TXT / MD / PDF / DOCX 等"),("hash",326,"SHA-256 去重","同仓库识别重复文件"),("queued",588,"后台入库登记","KnowledgeSourceDocument\nBackgroundTasks · 进程内\nqueued → parsing"),("parse",850,"格式提取","提取文本与文档结构"),("split",1112,"结构感知切片","父子块 · 标题 · 来源元数据")]
     for key,x,title,sub in row: c.node(key,x,250,title,sub,h=112,tone="blue")
     for a,b in [("upload","hash"),("hash","queued"),("queued","parse"),("parse","split")]: c.edge(a,b)
-    row2=[("state",64,"完成 / 失败状态","completed / failed\n保留处理阶段与错误"),("milvus",326,"Milvus 向量索引","repo_id · source_id\n检索与删除使用作用域"),("sql",588,"Document 关系表","正文 · 切片 · 来源元数据"),("embed",850,"批量 Embedding","固定 provider / model / dims\n分批向量化"),("normalize",1112,"片段准备","父文档关联 · 内容规范化")]
+    row2=[("state",64,"处理结果状态","completed / failed\n完成不代表向量就绪"),("milvus",326,"Milvus 向量写入","仅 MILVUS_ENABLED=true\nrepo_id · source_id"),("sql",588,"Document 关系表","正文 · 切片 · 来源元数据"),("embed",850,"批量 Embedding","固定 provider / model / dims\n分批向量化"),("normalize",1112,"片段准备","父文档关联 · 内容规范化")]
     for key,x,title,sub in row2: c.node(key,x,430,title,sub,h=112,tone="teal")
     c.edge("split","normalize","down")
     for a,b in [("normalize","embed"),("embed","sql"),("sql","milvus"),("milvus","state")]: c.edge(a,b,"left")
+    c.relate("sql","state",[(700,542),(700,562),(176,562),(176,542)],"未启用 Milvus：跳过写入",(438,563),dashed=True)
     c.note(577,"另一条入库入口：GitHub 同步",["Issue 正文、PR 说明 / Review 评论、失败 CI 日志 → 来源白名单（CI 日志脱敏）→ Document / Milvus。","当前源代码由 workspace.search_code / read_file 检索；实时状态回到数据库或 GitHub API 核查。"],"blue",98)
     c.section(735,"02","双路召回与候选整理","图示 hybrid；fulltext 只走关键词，vector 只走向量")
     c.node("scope",64,780,"问题与检索范围","repo_id · source_types\nmetadata filters",h=112,tone="blue")

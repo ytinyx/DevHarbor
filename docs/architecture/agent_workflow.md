@@ -8,6 +8,18 @@ DevHarbor 有两层控制流：`ChatAgent` 用模型的工具调用能力逐步�
 
 *架构示意图。Planner / Observer / Synthesis 为规则与结构化逻辑；图中并行关系表示依赖满足后的调度机会，不表示所有任务一定同时执行。*
 
+## 两层控制流各自负责什么
+
+| 维度 | ChatAgent | WorkflowOrchestrator |
+| --- | --- | --- |
+| 谁决定下一步 | LLM 返回工具调用或最终回答，LangGraph 执行控制循环 | Planner 按目标和可用数据构造任务图，调度器按依赖推进 |
+| 执行单元 | 服务端注册表中一个 `StructuredTool` | `WorkflowTask`，经 `task_type` 映射到服务端 runner |
+| 并发方式 | 同一轮待执行工具按队列逐个处理 | 同一批就绪任务用 `asyncio.gather` 执行，等整批结束再调度下一批 |
+| 结果 | 回答、引用、工具事件、`completion` | 任务结果、Observer 发现、Synthesis 报告与指标 |
+| 交汇点 | 可调用 `workflow.run_engineering_review` | 报告作为一次工具观察回到 ChatAgent；也可由计划执行 API 直接调用 |
+
+这种划分把开放式取证与可检查的依赖调度分开。LangGraph 管理对话循环；跨领域工作流是本项目自己的 Python 调度器，并非另一套 LangGraph 子图。Planner、Observer、Synthesis 本身采用规则与结构化逻辑，专项分析 Agent 才按各自实现调用模型或规则。
+
 ## 1. 请求进入模型之前
 
 [`api/routes/chat.py`](../../backend/app/api/routes/chat.py) 接收仓库与会话范围，依次完成：
@@ -35,7 +47,20 @@ DevHarbor 有两层控制流：`ChatAgent` 用模型的工具调用能力逐步�
 
 执行工具前会规范化名称与参数，检查显式 Skill 的工具边界；执行后记录 `tool_use`、`tool_result`、观察与引用。可恢复的部分异常会触发有限重试；未知工具、权限问题和一般执行失败都保留结构化错误类型。
 
-当前代码设置 `max_steps = 12`、同一工具调用重复上限为 `2`，可重试异常最多额外尝试 `1` 次。它们是控制预算，不是性能承诺。工具执行和模型调用失败时可返回降级回答，使用者应同时检查 `completion` 与工具事件，不能只看是否有回答文本。
+工具来自 `chat.py` 的服务端注册表，再由 `_build_langchain_tools` 包装为 `StructuredTool`；名称映射和参数 schema 让模型提出调用，具体函数及仓库、会话上下文仍由服务端绑定。显式 Skill 可以进一步约束可用工具，但这些约束不构成用户身份鉴权。
+
+当前代码设置 `max_steps = 12`，统计的是模型决策轮次；同一名称与参数的工具调用重复上限为 `2`。工具失败最多额外尝试 `1` 次，具体策略如下：
+
+| 触发情况 | 处理与边界 |
+| --- | --- |
+| 工具超时、限流、临时网络错误 | 可重试一次；安全草稿、周报、整个工程工作流三个工具不走该自动重试分支 |
+| 未知工具、权限不足、资料缺失或一般运行错误 | 记录结构化错误观察，供后续决策使用；不是所有错误都会自动重试 |
+| 模型上下文溢出 | 仅对失败的模型调用做一次更强的运行时上下文压缩后重试；不重放已执行工具 |
+| 其他通用模型调用异常 | 向 API 层传播；流式路由记录错误回答和失败运行，不保证生成替代分析 |
+| 没有模型配置 | 历史、项目概览或预检索路径可返回已有证据；不能据此认定完成模型推理 |
+| 重复工具调用或决策预算耗尽 | 终止循环，返回 `blocked` 或 `budget_exhausted` 等完成状态 |
+
+这些上限控制调用预算，不是总耗时保证。`completion.status`、`reason`、`tool_error_count` 与工具事件共同说明实际完成程度；有回答文本，甚至数据库中的 `AgentRun.status = success`，也不代表所有工具成功或结论可靠。
 
 ## 3. 工具分组与证据去向
 
@@ -62,17 +87,33 @@ DevHarbor 有两层控制流：`ChatAgent` 用模型的工具调用能力逐步�
 4. **规则观察。** `ObserverAgent` 汇总失败/跳过、证据缺失、低置信度、CI 门禁、PR 阻塞项、跨 Agent 冲突及人工确认需求。
 5. **有限重规划。** 对可修复发现调用 `PlannerAgent.replan`；默认最多一次，参数限制最多两次，计划没有改变时终止。这里是补充或调整任务图，不保证问题一定修复。
 6. **结构化综合。** `SynthesisAgent` 保留阻塞项和观察结论，生成决策、依据与下一步。
-7. **持久化。** 保存 `AgentWorkflowRun` 和 `AgentTaskRun`，记录目标、规格、各任务输入输出、状态与耗时等指标。
+7. **持久化。** 报告返回 API 层后，由 `_persist_engineering_workflow` 写入 `AgentWorkflowRun` 和 `AgentTaskRun`，随当前请求事务提交；记录目标、规格、各任务输入输出、状态与耗时等指标。
 
 典型依赖是 `repo_health → PR / Issue / CI / RAG`；是否创建某条分支取决于目标和可用数据。安全审查在有写入意图时被选入。**工作流计划中的 `claim` 用于明确任务范围，不替代服务端鉴权或进程隔离。**
 
-计划还可经 `/api/chat/plan` 展示，再由 `/api/chat/plan/execute/stream` 执行。这是工作流计划入口，与 GitHub 操作草稿的确认入口不同。
+计划还可经 `/api/chat/plan` 展示，再由 `/api/chat/plan/execute/stream` 执行。这是工作流计划入口，与 GitHub 操作草稿的确认入口不同。当前计划执行 API 直接调用 `run_spec`，仍使用默认的有限重规划策略；不能将“确认计划”理解成任务图绝不会增补。
+
+调度参数与失败状态见 [`WorkflowSpec`](../../backend/app/schemas/workflow.py) 和 [`workflow_orchestrator.py`](../../backend/app/services/agents/workflow_orchestrator.py)：并行批次默认上限为 3，schema 允许 1–8；单任务超时默认 90 秒，可由配置调整。超时记为 `error / timeout`，依赖失败记为 `skipped / dependency_failed`，缺失或循环依赖记为 `error / dependency_cycle_or_missing`。观察器仍可综合已取得的结果；数据库中的工作流 `status` 由任务错误计数决定，不直接表示 Observer 已允许合并。执行是否成功与“可以合并”的业务判断必须分开看。
+
+`asyncio.wait_for` 限制可协作取消的任务等待；runner 中的同步阻塞操作没有因此获得进程级强制终止能力。当前也没有覆盖整个请求的统一截止时间，或跨进程的任务取消、恢复协议。
 
 ## 5. 回答与记忆的闭环
 
 回答结束后保存 assistant 消息与 `AgentRun`。`SessionSealer` 将本轮 transcript、工具事件和摘要封存为 `ChatSession`，更新结构化记忆，并可捕获待审核的记忆候选。压缩后仍保留原始记录和恢复工具线索；压缩摘要不能替代原始证据。
 
 `ConversationMemory` 面向具体会话，`ThreadMemory` 保留仓库范围的兼容路径。长期记忆候选进入检索知识前需要相应确认流程；普通聊天历史和会话摘要不作为所有查询都可召回的向量文档。
+
+### 记录、流式展示与恢复的边界
+
+| 记录或信号 | 何时产生 | 可以据此判断什么 |
+| --- | --- | --- |
+| 用户消息与证据投影 | 模型调用前提交 | 请求输入可保留；之后失败可能只有输入、没有完整结果 |
+| ChatAgent 的 `tool_use` / `tool_result` | 工具开始前 / 工具返回后发往 SSE | 可观察工具进度；事件传输本身不是逐条持久化日志 |
+| 计划执行的任务轨迹 | `run_spec` 返回整份报告后整理并发往 SSE | 可回看任务关系与结果；不是每个任务的实时启动通知 |
+| assistant、`AgentRun`、封存 session | 完整结果处理时提交；SSE 的 `final` 在提交后发送 | 查询已保存回答、事件和记忆投影 |
+| `AgentWorkflowRun` / `AgentTaskRun` | 报告生成后加入请求事务 | 查询已落库任务报告；不是运行中任务的持久队列 |
+
+流式路由捕获普通异常后回滚当前未提交事务，再保存错误回答；此前已提交的用户消息不会一起撤回。LangGraph 当前未配置持久 checkpointer，工作流任务图也在进程内运行。连接中断、请求取消或进程退出时，没有统一的“补存全部中间事件并从原任务位置继续”机制；应先检查历史与运行记录，再决定是否重新发起请求。数据库回滚也不能撤销已发生的外部操作，写入流程见下一节。
 
 ## 6. 写入路径与使用边界
 
@@ -83,6 +124,8 @@ DevHarbor 有两层控制流：`ChatAgent` 用模型的工具调用能力逐步�
 | 行为 | 代码或测试 |
 | --- | --- |
 | 工具循环、事件、预算与错误 | [`chat_agent.py`](../../backend/app/services/agents/chat_agent.py)、[`test_chat_agent.py`](../../backend/app/tests/test_chat_agent.py) |
-| 计划、依赖、观察与重规划 | [`workflow_orchestrator.py`](../../backend/app/services/agents/workflow_orchestrator.py)、[`test_workflow_orchestrator.py`](../../backend/app/tests/test_workflow_orchestrator.py) |
+| 计划、并发批次、超时、失败依赖与重规划 | [`workflow_orchestrator.py`](../../backend/app/services/agents/workflow_orchestrator.py)、[`test_workflow_orchestrator.py`](../../backend/app/tests/test_workflow_orchestrator.py) |
 | Skill 载入与约束 | [`registry.py`](../../backend/app/services/skills/registry.py)、[`test_skill_registry.py`](../../backend/app/tests/test_skill_registry.py) |
 | 上下文压缩与证据投影 | [`chat_memory.py`](../../backend/app/services/chat_memory.py)、[`test_context_compression.py`](../../backend/app/tests/test_context_compression.py)、[`test_context_memory_projection.py`](../../backend/app/tests/test_context_memory_projection.py) |
+
+测试中可重点查看 `test_context_overflow_retries_only_the_failed_model_call`、`test_chat_agent_streams_tool_use_before_tool_finishes`、`test_orchestrator_times_out_stuck_task` 和 `test_orchestrator_marks_dependents_skipped_when_dependency_fails`。这些用例验证控制路径；替身模型与异步测试任务不代表真实服务的延迟、模型质量或进程崩溃恢复能力。

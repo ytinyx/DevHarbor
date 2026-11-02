@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1436" viewBox="0 0 1400 1436" role="img" aria-labelledby="title desc">
-<title id="title">工程工作流 · 规划、执行、观察与综合</title><desc id="desc">依赖图按就绪批次执行；失败、有限重规划与最终证据都进入可追溯的运行记录。</desc>
+<title id="title">工程工作流 · 规划、执行、观察与综合</title><desc id="desc">依赖图按就绪批次执行；报告生成后记录任务结果，最终随请求事务提交。</desc>
 <defs>
  <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#087f8c" stroke-width="1.5"/></marker>
  <marker id="muted-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#8aa2b6" stroke-width="1.5"/></marker>
@@ -12,7 +12,7 @@
 <g font-family="'Segoe UI','Microsoft YaHei','PingFang SC',Arial,sans-serif">
 <text x="64" y="43" font-size="13" font-weight="650" text-anchor="start" fill="#87d9dc" letter-spacing="2">DEVHARBOR  /  ENGINEERING NOTES</text>
 <text x="64" y="93" font-size="32" font-weight="700" text-anchor="start" fill="#ffffff">工程工作流 · 规划、执行、观察与综合</text>
-<text x="64" y="133" font-size="17" font-weight="400" text-anchor="start" fill="#c4d9e6">依赖图按就绪批次执行；失败、有限重规划与最终证据都进入可追溯的运行记录。</text>
+<text x="64" y="133" font-size="17" font-weight="400" text-anchor="start" fill="#c4d9e6">依赖图按就绪批次执行；报告生成后记录任务结果，最终随请求事务提交。</text>
 <rect x="64" y="196" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
 <text x="78" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="white">01</text>
 <text x="105" y="216" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">建立任务图</text>
@@ -132,9 +132,10 @@
 <text x="255" y="988" font-size="14" font-weight="400" text-anchor="middle" fill="#aa6421">新增任务，复用成功结果</text>
 <rect x="1054" y="1025" width="282" height="112" rx="12" fill="#10243b" stroke="#10243b"/>
 <path d="M1069 1045 V1117" stroke="#51d0ce" stroke-width="3" stroke-linecap="round"/>
-<text x="1084" y="1059" font-size="20" font-weight="650" text-anchor="start" fill="white">持久化运行轨迹</text>
+<text x="1084" y="1059" font-size="20" font-weight="650" text-anchor="start" fill="white">报告后的结果记录</text>
 <text x="1084" y="1085" font-size="14" font-weight="400" text-anchor="start" fill="#bfd7e5">AgentWorkflowRun</text>
 <text x="1084" y="1105" font-size="14" font-weight="400" text-anchor="start" fill="#bfd7e5">AgentTaskRun</text>
+<text x="1084" y="1125" font-size="14" font-weight="400" text-anchor="start" fill="#bfd7e5">flush → 外层事务 commit</text>
 <path d="M1195.0 953 L1195.0 1025" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <rect x="64" y="1025" width="612" height="132" rx="12" fill="#fff6e9" stroke="#e6c9a5"/>
 <text x="86" y="1053" font-size="18" font-weight="650" text-anchor="start" fill="#aa6421">归并任务结果的三类异常来源</text>
