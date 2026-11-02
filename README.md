@@ -99,7 +99,7 @@ npm --prefix frontend ci
 .\scripts\start_rag.ps1
 ```
 
-打开前端 **http://127.0.0.1:3000**，API 文档在 **http://127.0.0.1:8000/docs**。脚本创建独立的 SQLite 演示数据库，填入样例 Issue、PR 与 CI 数据，关闭模型调用和 Milvus。
+打开[本地工作台](http://127.0.0.1:3000)，API 文档在[本地 Swagger UI](http://127.0.0.1:8000/docs)。脚本创建独立的 SQLite 演示数据库，填入样例 Issue、PR 与 CI 数据，关闭模型调用和 Milvus。
 
 这个模式可以体验页面、结构化分析、文档上传、关键词检索与引用展示，向量检索会显示 `degraded`。**它不能验证真实向量召回或模型回答质量。**
 
@@ -130,7 +130,7 @@ python scripts/validate_docs.py
 
 | 想了解什么 | 阅读入口 |
 | --- | --- |
-| 系统如何分层、数据如何流动 | [系统设计](docs/architecture/system_design.md) · [数据模型](docs/architecture/database_schema.md) |
+| 系统如何分层、数据如何流动 | [架构导读](ARCHITECTURE.md) · [系统设计](docs/architecture/system_design.md) · [数据模型](docs/architecture/database_schema.md) |
 | Agent 如何调用工具、调度任务 | [Agent 工作流](docs/architecture/agent_workflow.md) |
 | 文档如何切片、召回、重排与引用 | [RAG 流程](docs/architecture/rag_pipeline.md) |
 | 怎样安装、演示和评估 | [启动](docs/guides/getting-started.md) · [演示](docs/guides/demo.md) · [评估](docs/guides/evaluation.md) |
