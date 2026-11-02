@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/hero.svg" alt="DevHarbor — 从仓库证据到工程决策的 AI 协作工作台" width="100%" />
+  <img src="docs/assets/hero.svg" alt="DevHarbor — 软件研发 AI 工作台，从代码与文档证据到可追溯的分析建议" width="100%" />
 </p>
 
 <p align="center">
@@ -19,11 +19,13 @@
   <a href="docs/guides/resume-and-interview.md">简历与面试讲解</a>
 </p>
 
-# DevHarbor
+# DevHarbor | 软件研发 AI 工作台
 
-**把 Issue、PR、CI 日志、项目文档和本地代码，串成可追溯的工程分析流程。**
+**把问题、代码、CI 日志与项目知识，串成可追溯的工程分析流程。**
 
-DevHarbor 是一个面向 GitHub 研发协作的全栈 AI Agent 项目。它围绕“这个 PR 能否合入”“CI 为什么失败”“这个需求还缺什么信息”等问题，连接仓库事实、调用分析工具、组织证据，并输出结构化建议与待确认的操作草稿。
+DevHarbor 是面向软件研发场景的 AI 工作台，集问题分析、代码审查、CI 故障排查与项目知识问答于一体。它结合多 Agent 编排与 RAG 检索，组织代码和文档证据，输出可追溯的分析建议，并通过人工确认执行外部操作。
+
+当前接入 **GitHub 与本地代码工作区**：读取 Issue、PR、CI 和项目文档，并核查当前 checkout 中的代码，支持“这次变更能否合入”“CI 为什么失败”“这个需求还缺什么信息”等具体任务。GitHub 是当前协作数据与外部操作的接入实现。
 
 当前版本适合**本机可信环境下的单用户开发与演示**。尚未实现登录认证；确认操作草稿会触发真实 GitHub 写入，`DEMO_MODE` 不会阻止写入。运行前请阅读[安全与使用边界](docs/architecture/security.md)。
 

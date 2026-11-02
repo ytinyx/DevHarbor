@@ -304,18 +304,19 @@ def rag():
 
 def hero():
     # The cover is explicitly an architecture illustration, never a fabricated screenshot.
-    c=Canvas("hero","DevHarbor","面向 GitHub 研发协作的全栈 AI Agent",540)
+    c=Canvas("hero","DevHarbor | 软件研发 AI 工作台","面向软件研发场景，以代码和文档证据支持问题分析、代码审查、CI 排障与知识问答；当前接入 GitHub 和本地代码工作区。",540)
     # Replace the technical header with a compact editorial cover.
     c.parts=[c.parts[0].split("<defs>", 1)[0]]
     c.parts.append(f'''<defs><linearGradient id="hero-bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1e32"/><stop offset="1" stop-color="#163c53"/></linearGradient><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#8bc2d3" opacity=".12"/></pattern></defs><rect width="1400" height="540" fill="url(#hero-bg)"/><rect width="1400" height="540" fill="url(#dots)"/><g font-family="{FONT}">''')
-    c.text(64,70,"GITHUB × AGENT × ENGINEERING CONTEXT",14,"#75d5d5",650,spacing=2)
+    c.text(64,70,"SOFTWARE DEVELOPMENT × AI WORKSPACE",14,"#75d5d5",650,spacing=2)
     c.text(62,166,"DevHarbor",76,"#ffffff",750,spacing=-2)
-    c.text(66,222,"让研发上下文汇入同一座港湾",30,"#e1eff7",600)
-    c.text(66,270,"从 Issue、PR 与 CI 证据出发，",20,"#adc9da")
-    c.text(66,302,"形成可追溯的分析、决策与待确认行动。",20,"#adc9da")
+    c.text(66,222,"软件研发 AI 工作台",30,"#e1eff7",600)
+    c.text(66,270,"从问题、代码、CI 与项目知识出发，",20,"#adc9da")
+    c.text(66,302,"组织证据，输出可追溯的分析与待确认行动。",20,"#adc9da")
     for x,w,label in [(66,140,"原生工具调用"),(220,148,"多 Agent 编排"),(382,146,"混合检索 RAG")]:
         c.rect(x,347,w,38,"#173d53","#316176",19)
         c.text(x+w/2,372,label,15,"#d7ebf1",550,"middle")
+    c.text(66,424,"当前接入 GitHub 与本地代码工作区",15,"#a0bed0")
     c.text(66,458,"FASTAPI  /  NEXT.JS  /  POSTGRESQL  /  MILVUS",13,"#7fa7bd",600,spacing=1.1)
     c.text(66,493,"本地与可信内网演示 · 代码可核查 · MIT License",14,"#a0bed0")
     # Port-like connections: evidence enters a small, legible processing network.

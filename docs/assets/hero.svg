@@ -1,18 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="540" viewBox="0 0 1400 540" role="img" aria-labelledby="title desc">
-<title id="title">DevHarbor</title><desc id="desc">面向 GitHub 研发协作的全栈 AI Agent</desc>
+<title id="title">DevHarbor | 软件研发 AI 工作台</title><desc id="desc">面向软件研发场景，以代码和文档证据支持问题分析、代码审查、CI 排障与知识问答；当前接入 GitHub 和本地代码工作区。</desc>
 
 <defs><linearGradient id="hero-bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1e32"/><stop offset="1" stop-color="#163c53"/></linearGradient><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#8bc2d3" opacity=".12"/></pattern></defs><rect width="1400" height="540" fill="url(#hero-bg)"/><rect width="1400" height="540" fill="url(#dots)"/><g font-family="'Segoe UI','Microsoft YaHei','PingFang SC',Arial,sans-serif">
-<text x="64" y="70" font-size="14" font-weight="650" text-anchor="start" fill="#75d5d5" letter-spacing="2">GITHUB × AGENT × ENGINEERING CONTEXT</text>
+<text x="64" y="70" font-size="14" font-weight="650" text-anchor="start" fill="#75d5d5" letter-spacing="2">SOFTWARE DEVELOPMENT × AI WORKSPACE</text>
 <text x="62" y="166" font-size="76" font-weight="750" text-anchor="start" fill="#ffffff" letter-spacing="-2">DevHarbor</text>
-<text x="66" y="222" font-size="30" font-weight="600" text-anchor="start" fill="#e1eff7">让研发上下文汇入同一座港湾</text>
-<text x="66" y="270" font-size="20" font-weight="400" text-anchor="start" fill="#adc9da">从 Issue、PR 与 CI 证据出发，</text>
-<text x="66" y="302" font-size="20" font-weight="400" text-anchor="start" fill="#adc9da">形成可追溯的分析、决策与待确认行动。</text>
+<text x="66" y="222" font-size="30" font-weight="600" text-anchor="start" fill="#e1eff7">软件研发 AI 工作台</text>
+<text x="66" y="270" font-size="20" font-weight="400" text-anchor="start" fill="#adc9da">从问题、代码、CI 与项目知识出发，</text>
+<text x="66" y="302" font-size="20" font-weight="400" text-anchor="start" fill="#adc9da">组织证据，输出可追溯的分析与待确认行动。</text>
 <rect x="66" y="347" width="140" height="38" rx="19" fill="#173d53" stroke="#316176"/>
 <text x="136.0" y="372" font-size="15" font-weight="550" text-anchor="middle" fill="#d7ebf1">原生工具调用</text>
 <rect x="220" y="347" width="148" height="38" rx="19" fill="#173d53" stroke="#316176"/>
 <text x="294.0" y="372" font-size="15" font-weight="550" text-anchor="middle" fill="#d7ebf1">多 Agent 编排</text>
 <rect x="382" y="347" width="146" height="38" rx="19" fill="#173d53" stroke="#316176"/>
 <text x="455.0" y="372" font-size="15" font-weight="550" text-anchor="middle" fill="#d7ebf1">混合检索 RAG</text>
+<text x="66" y="424" font-size="15" font-weight="400" text-anchor="start" fill="#a0bed0">当前接入 GitHub 与本地代码工作区</text>
 <text x="66" y="458" font-size="13" font-weight="600" text-anchor="start" fill="#7fa7bd" letter-spacing="1.1">FASTAPI  /  NEXT.JS  /  POSTGRESQL  /  MILVUS</text>
 <text x="66" y="493" font-size="14" font-weight="400" text-anchor="start" fill="#a0bed0">本地与可信内网演示 · 代码可核查 · MIT License</text>
 <rect x="710" y="84" width="190" height="82" rx="12" fill="#15334a" stroke="#3b647c"/>
