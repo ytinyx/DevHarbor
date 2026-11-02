@@ -1,0 +1,221 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1960" viewBox="0 0 1400 1960" role="img" aria-labelledby="title desc">
+<title id="title">RAG 流水线 · 入库、混合召回与证据门控</title><desc id="desc">本图的完整问答链对应知识库问答与检索实验；ChatAgent 检索工具有单独的轻量路径。</desc>
+<defs>
+ <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#087f8c" stroke-width="1.5"/></marker>
+ <marker id="muted-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#8aa2b6" stroke-width="1.5"/></marker>
+ <marker id="amber-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#aa6421" stroke-width="1.5"/></marker>
+ <linearGradient id="header" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#10243b"/><stop offset="1" stop-color="#173d54"/></linearGradient>
+</defs>
+<rect width="1400" height="1960" fill="#f5f8fc"/>
+<rect width="1400" height="174" fill="url(#header)"/>
+<path d="M0 173 H1400" stroke="#35bec1" stroke-width="3"/>
+<g font-family="'Segoe UI','Microsoft YaHei','PingFang SC',Arial,sans-serif">
+<text x="64" y="43" font-size="13" font-weight="650" text-anchor="start" fill="#87d9dc" letter-spacing="2">DEVHARBOR  /  ENGINEERING NOTES</text>
+<text x="64" y="93" font-size="32" font-weight="700" text-anchor="start" fill="#ffffff">RAG 流水线 · 入库、混合召回与证据门控</text>
+<text x="64" y="133" font-size="17" font-weight="400" text-anchor="start" fill="#c4d9e6">本图的完整问答链对应知识库问答与检索实验；ChatAgent 检索工具有单独的轻量路径。</text>
+<rect x="64" y="196" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="white">01</text>
+<text x="105" y="216" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">文档入库</text>
+<text x="1336" y="216" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">文件内容、切片版本、Embedding 配置与处理状态可追踪</text>
+<rect x="64" y="250" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M79 270 V342" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="284" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">文件上传</text>
+<text x="94" y="310" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">TXT / MD / PDF / DOCX 等</text>
+<rect x="326" y="250" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M341 270 V342" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="284" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">SHA-256 去重</text>
+<text x="356" y="310" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">同仓库识别重复文件</text>
+<rect x="588" y="250" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M603 270 V342" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="284" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">入库任务登记</text>
+<text x="618" y="310" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">KnowledgeSourceDocument</text>
+<text x="618" y="330" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">queued → parsing</text>
+<rect x="850" y="250" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M865 270 V342" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="880" y="284" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">格式提取</text>
+<text x="880" y="310" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">提取文本与文档结构</text>
+<rect x="1112" y="250" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M1127 270 V342" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="1142" y="284" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">结构感知切片</text>
+<text x="1142" y="310" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">父子块 · 标题 · 来源元数据</text>
+<path d="M288 306.0 L326 306.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M550 306.0 L588 306.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M812 306.0 L850 306.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1074 306.0 L1112 306.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="430" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M79 450 V522" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">完成 / 失败状态</text>
+<text x="94" y="490" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">completed / failed</text>
+<text x="94" y="510" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">保留处理阶段与错误</text>
+<rect x="326" y="430" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M341 450 V522" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">Milvus 向量索引</text>
+<text x="356" y="490" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">repo_id · source_id</text>
+<text x="356" y="510" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">检索与删除使用作用域</text>
+<rect x="588" y="430" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M603 450 V522" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">Document 关系表</text>
+<text x="618" y="490" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">正文 · 切片 · 来源元数据</text>
+<rect x="850" y="430" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M865 450 V522" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="880" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">批量 Embedding</text>
+<text x="880" y="490" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">固定 provider / model / dims</text>
+<text x="880" y="510" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">分批向量化</text>
+<rect x="1112" y="430" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M1127 450 V522" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="1142" y="464" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">片段准备</text>
+<text x="1142" y="490" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">父文档关联 · 内容规范化</text>
+<path d="M1224.0 362 L1224.0 430" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1112 486.0 L1074 486.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M850 486.0 L812 486.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M588 486.0 L550 486.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M326 486.0 L288 486.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="577" width="1272" height="98" rx="12" fill="#eef4ff" stroke="#d2def0"/>
+<text x="86" y="606" font-size="17" font-weight="650" text-anchor="start" fill="#4267b2">另一条入库入口：GitHub 同步</text>
+<text x="86" y="632" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">Issue 正文、PR 说明 / Review 评论、失败 CI 日志 → 来源白名单（CI 日志脱敏）→ Document / Milvus。</text>
+<text x="86" y="655" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">当前源代码由 workspace.search_code / read_file 检索；实时状态回到数据库或 GitHub API 核查。</text>
+<rect x="64" y="715" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="734" font-size="13" font-weight="700" text-anchor="middle" fill="white">02</text>
+<text x="105" y="735" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">双路召回与候选整理</text>
+<text x="1336" y="735" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">图示 hybrid；fulltext 只走关键词，vector 只走向量</text>
+<rect x="64" y="780" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M79 800 V872" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="814" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">问题与检索范围</text>
+<text x="94" y="840" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">repo_id · source_types</text>
+<text x="94" y="860" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">metadata filters</text>
+<rect x="326" y="780" width="224" height="112" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M341 800 V872" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="814" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">Query Embedding</text>
+<text x="356" y="840" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">使用知识库向量配置</text>
+<rect x="588" y="780" width="224" height="112" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M603 800 V872" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="814" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">Milvus 召回</text>
+<text x="618" y="840" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">向量相似度候选</text>
+<rect x="326" y="970" width="224" height="112" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M341 990 V1062" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="1004" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">BM25 召回</text>
+<text x="356" y="1030" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">对文档文本计算词项分数</text>
+<rect x="588" y="970" width="224" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M603 990 V1062" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="1004" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">加权融合</text>
+<text x="618" y="1030" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">向量 / 词项 / 双命中奖励</text>
+<rect x="850" y="970" width="224" height="112" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M865 990 V1062" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="880" y="1004" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">内容去重</text>
+<text x="880" y="1030" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">文本指纹 · 近重复片段</text>
+<rect x="1112" y="970" width="224" height="112" rx="12" fill="#ffffff" stroke="#d1dfea"/>
+<path d="M1127 990 V1062" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="1142" y="1004" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">同父块限额</text>
+<text x="1142" y="1030" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">避免单文档占满候选</text>
+<path d="M288 836.0 L326 836.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M550 836.0 L588 836.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M176 892 L176 1026 L326 1026" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="131.75" y="928" width="122.5" height="24" rx="4" fill="#f5f8fc" stroke="none"/>
+<text x="193" y="945" font-size="14" font-weight="400" text-anchor="middle" fill="#087f8c">同一问题 / 范围</text>
+<path d="M700.0 892 L700.0 970" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="664.0" y="904.0" width="72" height="24" rx="4" fill="#f5f8fc" stroke="none"/>
+<text x="700.0" y="921.0" font-size="14" font-weight="400" text-anchor="middle" fill="#087f8c">向量候选</text>
+<path d="M550 1026.0 L588 1026.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="547.0" y="999.0" width="44" height="24" rx="4" fill="#f5f8fc" stroke="none"/>
+<text x="569.0" y="1016.0" font-size="14" font-weight="400" text-anchor="middle" fill="#087f8c">词项</text>
+<path d="M812 1026.0 L850 1026.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1074 1026.0 L1112 1026.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="850" y="780" width="486" height="112" rx="12" fill="#fff6e9" stroke="#ecd6b9"/>
+<text x="874" y="813" font-size="18" font-weight="650" text-anchor="start" fill="#aa6421">向量后端不可用时</text>
+<text x="874" y="843" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">hybrid：保留 BM25，记录 unavailable</text>
+<text x="874" y="868" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">vector：向上抛出不可用错误（API 503）</text>
+<rect x="64" y="1130" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="1149" font-size="13" font-weight="700" text-anchor="middle" fill="white">03</text>
+<text x="105" y="1150" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">知识库精排与上下文准备</text>
+<text x="1336" y="1150" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">retrieve_knowledge：逐阶段保留 pipeline_trace</text>
+<rect x="64" y="1184" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M79 1204 V1276" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="1218" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">上下文压缩</text>
+<text x="94" y="1244" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">按 token 预算收敛证据</text>
+<rect x="326" y="1184" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M341 1204 V1276" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="356" y="1218" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">分数阈值过滤</text>
+<text x="356" y="1244" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">依据知识库配置启用</text>
+<rect x="588" y="1184" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M603 1204 V1276" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="618" y="1218" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">邻块扩展</text>
+<text x="618" y="1244" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">同父文档 · 同一版本</text>
+<rect x="850" y="1184" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M865 1204 V1276" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="880" y="1218" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">Top-K 选择</text>
+<text x="880" y="1244" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">限制进入上下文的候选</text>
+<rect x="1112" y="1184" width="224" height="112" rx="12" fill="#eef4ff" stroke="#bfcee9"/>
+<path d="M1127 1204 V1276" stroke="#4267b2" stroke-width="3" stroke-linecap="round"/>
+<text x="1142" y="1218" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">候选重排</text>
+<text x="1142" y="1244" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">Qwen rerank / heuristic</text>
+<text x="1142" y="1264" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">远程失败记录 fallback</text>
+<path d="M1224.0 1082 L1224.0 1184" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1112 1240.0 L1074 1240.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M850 1240.0 L812 1240.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M588 1240.0 L550 1240.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M326 1240.0 L288 1240.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="1345" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="1364" font-size="13" font-weight="700" text-anchor="middle" fill="white">04</text>
+<text x="105" y="1365" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">回答前的证据关口</text>
+<text x="1336" y="1365" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">引用跟随真实检索结果；不足时不强行拼接结论</text>
+<rect x="64" y="1399" width="224" height="112" rx="12" fill="#10243b" stroke="#10243b"/>
+<path d="M79 1419 V1491" stroke="#51d0ce" stroke-width="3" stroke-linecap="round"/>
+<text x="94" y="1433" font-size="20" font-weight="650" text-anchor="start" fill="white">Answer Gate</text>
+<text x="94" y="1459" font-size="14" font-weight="400" text-anchor="start" fill="#bfd7e5">判断证据充分性</text>
+<rect x="394" y="1399" width="282" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M409 1419 V1491" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="424" y="1433" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">生成 / 摘录式回答</text>
+<text x="424" y="1459" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">可用 LLM 或本地提取式回答</text>
+<rect x="724" y="1399" width="282" height="112" rx="12" fill="#e9f7f6" stroke="#addbd7"/>
+<path d="M739 1419 V1491" stroke="#087f8c" stroke-width="3" stroke-linecap="round"/>
+<text x="754" y="1433" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">编号引用与来源</text>
+<text x="754" y="1459" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">答案 + sources + pipeline_trace</text>
+<rect x="394" y="1576" width="282" height="92" rx="12" fill="#fff6e9" stroke="#e6c9a5"/>
+<path d="M409 1596 V1648" stroke="#aa6421" stroke-width="3" stroke-linecap="round"/>
+<text x="424" y="1610" font-size="20" font-weight="650" text-anchor="start" fill="#17334c">拒答 / 请求澄清</text>
+<text x="424" y="1636" font-size="14" font-weight="400" text-anchor="start" fill="#5c7185">没有足够证据时明确说明</text>
+<path d="M176.0 1296 L176.0 1399" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M288 1455.0 L394 1455.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="319.0" y="1428.0" width="44" height="24" rx="4" fill="#f5f8fc" stroke="none"/>
+<text x="341.0" y="1445.0" font-size="14" font-weight="400" text-anchor="middle" fill="#087f8c">足够</text>
+<path d="M676 1455.0 L724 1455.0" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M176 1511 L176 1622 L394 1622" fill="none" stroke="#aa6421" stroke-width="2" stroke-linejoin="round" marker-end="url(#amber-arrow)"/>
+<rect x="260.0" y="1595" width="44" height="24" rx="4" fill="#f5f8fc" stroke="none"/>
+<text x="282" y="1612" font-size="14" font-weight="400" text-anchor="middle" fill="#aa6421">不足</text>
+<rect x="64" y="1720" width="1272" height="123" rx="12" fill="#fff6e9" stroke="#ecd6b9"/>
+<text x="86" y="1749" font-size="17" font-weight="650" text-anchor="start" fill="#aa6421">两条调用路径，避免混为一谈</text>
+<text x="86" y="1775" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">知识库问答 / 检索实验：retrieve_knowledge → 配置化重排、阈值、邻块扩展与 Answer Gate → 答案或澄清。</text>
+<text x="86" y="1798" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">ChatAgent 工具：search_similar_documents → 混合召回、去重、启发式重排与压缩 → 模型继续使用工具验证证据。</text>
+<text x="86" y="1821" font-size="15" font-weight="400" text-anchor="start" fill="#5c7185">deterministic embedding 与关闭 Milvus 的本地演示可验证流程，不代表真实语义召回质量或完整混合检索已通过验证。</text>
+<rect x="58" y="192" width="139" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="973.0" y="195" width="371.0" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="64" y="196" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="white">01</text>
+<text x="105" y="216" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">文档入库</text>
+<text x="1336" y="216" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">文件内容、切片版本、Embedding 配置与处理状态可追踪</text>
+<rect x="58" y="711" width="244" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="973.5" y="714" width="370.5" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="64" y="715" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="734" font-size="13" font-weight="700" text-anchor="middle" fill="white">02</text>
+<text x="105" y="735" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">双路召回与候选整理</text>
+<text x="1336" y="735" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">图示 hybrid；fulltext 只走关键词，vector 只走向量</text>
+<rect x="58" y="1126" width="286" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="996.5" y="1129" width="347.5" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="64" y="1130" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="1149" font-size="13" font-weight="700" text-anchor="middle" fill="white">03</text>
+<text x="105" y="1150" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">知识库精排与上下文准备</text>
+<text x="1336" y="1150" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">retrieve_knowledge：逐阶段保留 pipeline_trace</text>
+<rect x="58" y="1341" width="223" height="34" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="1034" y="1344" width="310" height="30" rx="0" fill="#f5f8fc" stroke="none"/>
+<rect x="64" y="1345" width="28" height="26" rx="6" fill="#087f8c" stroke="#087f8c"/>
+<text x="78" y="1364" font-size="13" font-weight="700" text-anchor="middle" fill="white">04</text>
+<text x="105" y="1365" font-size="21" font-weight="650" text-anchor="start" fill="#17334c">回答前的证据关口</text>
+<text x="1336" y="1365" font-size="14" font-weight="400" text-anchor="end" fill="#5c7185">引用跟随真实检索结果；不足时不强行拼接结论</text>
+<path d="M64 1898 L116 1898" fill="none" stroke="#087f8c" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="126" y="1903" font-size="13" font-weight="400" text-anchor="start" fill="#5c7185">主流程 / 数据流</text>
+<path d="M326 1898 L378 1898" fill="none" stroke="#8aa2b6" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#muted-arrow)"/>
+<text x="388" y="1903" font-size="13" font-weight="400" text-anchor="start" fill="#5c7185">支撑关系 / 按需分支</text>
+<path d="M632 1898 L684 1898" fill="none" stroke="#aa6421" stroke-width="2" stroke-linejoin="round" marker-end="url(#amber-arrow)"/>
+<text x="694" y="1903" font-size="13" font-weight="400" text-anchor="start" fill="#5c7185">异常 / 重规划 / 人工关口</text>
+<text x="1336" y="1903" font-size="12" font-weight="400" text-anchor="end" fill="#5c7185" letter-spacing="1">CODE-ALIGNED  ·  EDITABLE SVG</text>
+</g></svg>

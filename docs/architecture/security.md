@@ -1,5 +1,7 @@
 # 安全与使用边界
 
+[返回首页](../../README.md) · [运行指南](../guides/getting-started.md) · [配置参考](../guides/configuration.md) · [私密报告安全问题](../../SECURITY.md)
+
 当前版本面向本机、单用户、可信环境下的开发和演示。它尚未实现登录认证或按请求用户进行授权：`require_permission` 会从数据库选择演示用户，并检查该用户的角色。角色检查和 CORS 都不能替代身份认证。请仅监听本机地址；在补齐身份认证、资源授权和隔离之前，不要将应用 API 直接开放到公网或不受信任的局域网。
 
 ## GitHub 写入行为
@@ -22,6 +24,8 @@ CI 使用 SQLite、确定性 Embedding 和模拟模型运行后端测试，并�
 
 ## 依赖审计记录（2026-10-31）
 
+以下为该日期的历史审计快照，保留用于说明已做的检查与当时的限制，不代表后续日期的实时漏洞状态。复核时应记录依赖锁定版本、扫描时间和原始结果。
+
 前端已升级到 Next.js 15.5.28、React 19.0.9，并修复可兼容升级的传递依赖。`npm audit --omit=dev` 为零漏洞；完整审计仍有 14 条中危记录，属于 ESLint / TypeScript-ESLint / minimatch 开发工具链，没有高危或严重记录。CI 当前阻止生产依赖中的高危和严重漏洞，未将开发工具链的中危项视作已修复。
 
 后端已升级有可用修复的依赖并通过完整测试和依赖兼容性检查。`pip-audit` 仍报告以下 2 个唯一公告（原始结果有 4 条重复记录）；截至检查时，两项公告均没有已公布的修复版本，未通过忽略规则隐藏：
@@ -32,3 +36,16 @@ CI 使用 SQLite、确定性 Embedding 和模拟模型运行后端测试，并�
 | ragas 0.4.3 | [CVE-2026-6587](https://github.com/advisories/GHSA-95ww-475f-pr4f)：多模态 Faithfulness 的 URL/本地文件处理 | 当前仅实例化固定文本指标，没有调用多模态 Faithfulness。保持这一边界，不开放多模态 URL/文件输入；部署时限制评测进程外连，并跟进上游修复。 |
 
 调用路径判断来自 `backend/app/services/evals/ragas_runner.py` 的当前实现，不代表依赖本身不存在漏洞。升级依赖或启用新指标、缓存功能时必须重新审计。可使用隔离的审计工具从项目根目录复核：`uvx pip-audit -r backend/requirements.txt`；存在上述公告时，非零退出码是预期结果。CI 的依赖安全检查目前覆盖前端生产依赖，后端 `pip check` 仅验证兼容性。
+
+## 代码核查入口
+
+| 边界 | 实现 |
+| --- | --- |
+| 演示用户与角色检查 | [`permissions.py`](../../backend/app/services/permissions.py) |
+| 草稿确认、GitHub 执行与审计 | [`action_drafts.py`](../../backend/app/api/routes/action_drafts.py) |
+| 仓库 Token 加密 | [`security.py`](../../backend/app/core/security.py) |
+| GitHub Token 回退与写入请求 | [`github/client.py`](../../backend/app/services/github/client.py) |
+| Webhook 签名 | [`webhooks.py`](../../backend/app/api/routes/webhooks.py) |
+| Judge 指标与数据流 | [`ragas_runner.py`](../../backend/app/services/evals/ragas_runner.py) |
+
+检索中的 `repo_id` 过滤用于数据范围约束，不能替代按真实用户身份进行的资源授权。运行时的草稿复核、证据引用、工具 trace 和审计日志有助于解释行为，当前不构成完整的多租户安全体系。
