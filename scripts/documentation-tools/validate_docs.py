@@ -353,19 +353,25 @@ def validate(root: Path) -> tuple[list[str], dict[str, int]]:
                 errors.append("offline viewer is missing diagram data or has stale order")
             for item in manifest:
                 counts["diagrams"] += 1
+                text_assets = {}
                 for key in ("source", "svg", "png"):
                     asset = (atlas / item[key]).resolve()
                     if not asset.is_relative_to(atlas.resolve()) or not asset.is_file():
                         errors.append(f"diagram {item['id']}: missing or out-of-bounds {key} asset")
                         continue
                     if key in ("source", "svg"):
-                        digest = hashlib.sha256(asset.read_bytes()).hexdigest()
+                        raw = asset.read_bytes()
+                        if key == "source":
+                            # Match Git's LF checkout and the source embedded in the viewer.
+                            raw = raw.replace(b"\r\n", b"\n")
+                        text_assets[key] = raw.decode("utf-8")
+                        digest = hashlib.sha256(raw).hexdigest()
                         if digest != item.get(key + "_sha256"):
                             errors.append(f"diagram {item['id']}: {key} changed; rebuild diagram and viewer")
                 inline = next((x for x in embedded if x["id"] == item["id"]), None)
                 if inline:
                     for field, asset_key in (("markup", "svg"), ("code", "source")):
-                        if inline.get(field) != (atlas / item[asset_key]).read_bytes().decode("utf-8"):
+                        if asset_key in text_assets and inline.get(field) != text_assets[asset_key]:
                             errors.append(f"diagram {item['id']}: stale embedded {field} in offline viewer")
             parser = HTMLReferences()
             parser.feed(viewer)

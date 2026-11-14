@@ -4,7 +4,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { pathToFileURL } = require('node:url');
 const { chromium } = require('playwright');
-const { buildViewer } = require('./viewer.cjs');
+const { buildViewer, readDiagramSource } = require('./viewer.cjs');
 const { renderDirectory } = require('./directory.cjs');
 const root = path.resolve(__dirname, '../../..');
 const out = path.join(root, 'docs/diagrams');
@@ -37,7 +37,7 @@ let browser;
   fs.mkdirSync(path.join(out, 'png'), { recursive: true });
   for (const item of all) {
     if (selected.length && !selected.includes(item.id)) continue;
-    const source = fs.readFileSync(path.join(sourceDir, item.id + '.mmd'), 'utf8');
+    const source = readDiagramSource(path.join(sourceDir, item.id + '.mmd'));
     const directory = item.id === '00_project_directory';
     const rendered = await page.evaluate(async ({ id, source, directory }) => {
       if (directory) {
