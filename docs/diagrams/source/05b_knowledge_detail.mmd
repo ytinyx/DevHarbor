@@ -1,0 +1,199 @@
+%% 知识、检索、代码图与评估字段
+%% Source: backend/app/db/models.py and runtime DDL in backend/app/services/rag/pgvector_store.py.
+%% PK=primary key; FK=declared ForeignKey; UK=single-column unique; IDX=index; NULL=nullable.
+%% Mermaid .. means non-identifying relationship. FK/LOGICAL labels distinguish constraints, not line style.
+%% Cross-store Milvus document_id is logical and is not another SQL table.
+%% documents 保存文本片段和 metadata；向量由 Milvus 或 PostgreSQL pgvector 保存。
+%% documents.source_type + source_id 是多态来源，knowledge_file 时可指向上传文档。
+%% knowledge_graph_edges 的 from/to 端点为应用层多态标识，可能对应文档组或文件，不是 FK。
+%% eval_runs 无 repo_id 列，RAG 任务的仓库范围和状态存放在 result_json。
+erDiagram
+    %% 方向由渲染器 er.layoutDirection 配置；旧版 ER 解析器不接受 direction 指令。
+    accTitle: DevHarbor 知识、检索、代码图与评估字段
+    accDescr: 图示包含 ORM 声明与按需创建的 pgvector 表。FK 为数据库外键，LOGICAL 为应用层关联。
+    project_index_states {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK, UK "NOT NULL; IDX; to repositories.id"
+        VARCHAR(40) status "NOT NULL; IDX"
+        VARCHAR(200) fingerprint "NOT NULL"
+        TIMESTAMP last_scan_at "NULL; tz"
+        TIMESTAMP snoozed_until "NULL; tz"
+        INTEGER docs_indexed "NOT NULL"
+        INTEGER docs_total "NOT NULL"
+        TEXT error_message "NULL"
+        JSON summary_json "NULL"
+        TIMESTAMP created_at "NOT NULL; tz"
+        TIMESTAMP updated_at "NOT NULL; tz"
+    }
+    documents {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        VARCHAR(80) source_type "NOT NULL; IDX"
+        UUID source_id "NOT NULL; IDX; LOGICAL source_type discriminator"
+        VARCHAR(500) title "NOT NULL"
+        TEXT content "NOT NULL"
+        JSON metadata "NOT NULL; Python attr meta; chunk metadata"
+        TIMESTAMP created_at "NOT NULL; tz"
+    }
+    rag_document_vectors {
+        TEXT collection_name PK "NOT NULL; composite PK"
+        UUID document_id PK, FK "NOT NULL; IDX; to documents.id; ON DELETE CASCADE"
+        VECTOR embedding "NOT NULL"
+    }
+    retrieval_model_settings {
+        VARCHAR(20) kind PK "NOT NULL"
+        JSON configuration "NULL"
+        TEXT api_key_encrypted "NULL"
+        TEXT milvus_token_encrypted "NULL"
+        UUID revision "NOT NULL"
+    }
+    knowledge_base_configs {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK, UK "NOT NULL; IDX; to repositories.id"
+        VARCHAR(80) embedding_provider "NOT NULL"
+        VARCHAR(240) embedding_model "NOT NULL"
+        INTEGER embedding_dimensions "NOT NULL"
+        VARCHAR(40) retrieval_method "NOT NULL"
+        BOOLEAN rerank_enabled "NOT NULL"
+        VARCHAR(80) rerank_provider "NOT NULL"
+        VARCHAR(240) rerank_model "NOT NULL"
+        INTEGER top_k "NOT NULL"
+        BOOLEAN score_threshold_enabled "NOT NULL"
+        FLOAT score_threshold "NOT NULL"
+        INTEGER chunk_size "NOT NULL"
+        INTEGER chunk_overlap "NOT NULL"
+        TIMESTAMP created_at "NOT NULL; tz"
+        TIMESTAMP updated_at "NOT NULL; tz"
+    }
+    knowledge_source_documents {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        VARCHAR(500) name "NOT NULL"
+        VARCHAR(80) source_type "NOT NULL"
+        VARCHAR(40) status "NOT NULL; IDX"
+        TEXT stored_path "NOT NULL"
+        VARCHAR(200) content_type "NULL"
+        VARCHAR(64) checksum "NOT NULL; IDX"
+        INTEGER file_size "NOT NULL"
+        INTEGER character_count "NOT NULL"
+        INTEGER chunk_count "NOT NULL"
+        TEXT error_message "NULL"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+        TIMESTAMP updated_at "NOT NULL; tz"
+        TIMESTAMP completed_at "NULL; tz"
+    }
+    retrieval_test_runs {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        TEXT query "NOT NULL"
+        JSON retrieval_config "NOT NULL"
+        JSON results_json "NOT NULL"
+        INTEGER duration_ms "NOT NULL"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+    }
+    code_symbols {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        VARCHAR(500) path "NOT NULL; IDX"
+        VARCHAR(300) name "NOT NULL; IDX"
+        VARCHAR(80) kind "NOT NULL; IDX"
+        VARCHAR(80) language "NOT NULL; IDX"
+        INTEGER start_line "NULL"
+        INTEGER end_line "NULL"
+        VARCHAR(200) branch "NULL; IDX"
+        VARCHAR(120) commit_sha "NULL; IDX"
+        UUID pr_id "NULL; IDX; LOGICAL pull_requests.id"
+        INTEGER pr_number "NULL; IDX"
+        JSON metadata "NOT NULL; Python attr meta"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+    }
+    code_relations {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        UUID source_symbol_id FK "NULL; IDX; to code_symbols.id"
+        UUID target_symbol_id FK "NULL; IDX; to code_symbols.id"
+        VARCHAR(300) source_name "NULL; IDX"
+        VARCHAR(300) target_name "NOT NULL; IDX"
+        VARCHAR(80) relation_type "NOT NULL; IDX"
+        VARCHAR(500) path "NULL; IDX"
+        VARCHAR(200) branch "NULL; IDX"
+        UUID pr_id "NULL; IDX; LOGICAL pull_requests.id"
+        INTEGER pr_number "NULL; IDX"
+        JSON metadata "NOT NULL; Python attr meta"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+    }
+    evidence_items {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NULL; IDX; to repositories.id"
+        UUID conversation_id FK "NULL; IDX; to conversations.id"
+        VARCHAR(80) source_type "NOT NULL; IDX"
+        VARCHAR(120) source_id "NOT NULL; IDX; LOGICAL source_type discriminator"
+        VARCHAR(500) title "NOT NULL"
+        TEXT content "NOT NULL"
+        JSON metadata "NOT NULL; Python attr meta"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+    }
+    knowledge_graph_edges {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        VARCHAR(80) from_type "NOT NULL; IDX"
+        VARCHAR(180) from_id "NOT NULL; IDX; LOGICAL from_type discriminator"
+        VARCHAR(80) to_type "NOT NULL; IDX"
+        VARCHAR(180) to_id "NOT NULL; IDX; LOGICAL to_type discriminator"
+        VARCHAR(80) relation "NOT NULL; IDX"
+        FLOAT confidence "NOT NULL"
+        VARCHAR(120) source "NOT NULL"
+        JSON metadata "NOT NULL; Python attr meta"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+    }
+    recall_events {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NULL; IDX; to repositories.id"
+        UUID conversation_id FK "NULL; IDX; to conversations.id"
+        VARCHAR(120) tool_name "NOT NULL; IDX"
+        TEXT query "NOT NULL"
+        VARCHAR(120) scope "NOT NULL"
+        VARCHAR(80) mode "NOT NULL"
+        VARCHAR(80) status "NOT NULL; IDX"
+        INTEGER result_count "NOT NULL"
+        JSON results_json "NOT NULL"
+        JSON citations_json "NOT NULL"
+        JSON metadata "NOT NULL; Python attr meta"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+    }
+    eval_runs {
+        UUID id PK "NOT NULL"
+        VARCHAR(200) name "NOT NULL"
+        JSON result_json "NOT NULL; RAG repo_id, state, cases, metrics"
+        TIMESTAMP created_at "NOT NULL; tz"
+    }
+    repositories {
+        UUID id PK "bridge; full fields in other detail"
+    }
+    conversations {
+        UUID id PK "bridge; full fields in other detail"
+    }
+    pull_requests {
+        UUID id PK "bridge; full fields in other detail"
+    }
+
+    repositories ||..o| project_index_states : "FK repo_id"
+    repositories ||..o{ documents : "FK repo_id"
+    documents ||..o{ rag_document_vectors : "FK document_id · pgvector 按需创建"
+    repositories ||..o| knowledge_base_configs : "FK repo_id"
+    repositories ||..o{ knowledge_source_documents : "FK repo_id"
+    repositories ||..o{ retrieval_test_runs : "FK repo_id"
+    repositories ||..o{ code_symbols : "FK repo_id"
+    repositories ||..o{ code_relations : "FK repo_id"
+    code_symbols |o..o{ code_relations : "FK source_symbol_id"
+    code_symbols |o..o{ code_relations : "FK target_symbol_id"
+    repositories |o..o{ evidence_items : "FK repo_id"
+    conversations |o..o{ evidence_items : "FK conversation_id"
+    repositories ||..o{ knowledge_graph_edges : "FK repo_id"
+    repositories |o..o{ recall_events : "FK repo_id"
+    conversations |o..o{ recall_events : "FK conversation_id"
+    knowledge_source_documents |o..o{ documents : "LOGICAL source_id when knowledge_file"
+    pull_requests |o..o{ documents : "LOGICAL source_id when pull_request"
+    pull_requests |o..o{ code_symbols : "LOGICAL pr_id"
+    pull_requests |o..o{ code_relations : "LOGICAL pr_id"
+    repositories |o..o{ eval_runs : "LOGICAL result_json.repo_id for RAG"

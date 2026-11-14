@@ -1,0 +1,4628 @@
+{
+  "source": "backend/app/db/models.py",
+  "source_sha256": "4d58af9c8e0d10ce5f8958f428a0c58d21543f0f0efae3c93a2e9f57336de9ed",
+  "scope": "SQLAlchemy declared schema, with separately documented runtime pgvector DDL. No live database inspection or claim of FK enforcement in SQLite.",
+  "legend": {
+    "PK": "primary key",
+    "FK": "declared ForeignKey",
+    "UK": "single-column unique",
+    "IDX": "index",
+    "NULL": "nullable",
+    "NOT NULL": "non-nullable",
+    "LOGICAL": "application-managed association, not a database foreign key"
+  },
+  "table_count": 36,
+  "column_count": 371,
+  "foreign_key_count": 47,
+  "foreign_keys": [
+    {
+      "parent": "model_providers",
+      "parent_column": "id",
+      "child": "model_provider_selection",
+      "column": "provider_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": "SET NULL"
+    },
+    {
+      "parent": "users",
+      "parent_column": "id",
+      "child": "workspaces",
+      "column": "created_by",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "project_index_states",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": true,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "conversations",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "issues",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "pull_requests",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "pull_requests",
+      "parent_column": "id",
+      "child": "pr_files",
+      "column": "pr_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "pull_requests",
+      "parent_column": "id",
+      "child": "pr_review_comments",
+      "column": "pr_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "workflow_runs",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "documents",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "knowledge_base_configs",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": true,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "knowledge_source_documents",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "retrieval_test_runs",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "code_symbols",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "code_relations",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "code_symbols",
+      "parent_column": "id",
+      "child": "code_relations",
+      "column": "source_symbol_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "code_symbols",
+      "parent_column": "id",
+      "child": "code_relations",
+      "column": "target_symbol_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "chat_messages",
+      "column": "repo_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "conversations",
+      "parent_column": "id",
+      "child": "chat_messages",
+      "column": "conversation_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "chat_sessions",
+      "column": "repo_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "conversations",
+      "parent_column": "id",
+      "child": "chat_sessions",
+      "column": "conversation_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "thread_memories",
+      "column": "repo_id",
+      "nullable": true,
+      "unique": true,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "conversation_memories",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "conversations",
+      "parent_column": "id",
+      "child": "conversation_memories",
+      "column": "conversation_id",
+      "nullable": false,
+      "unique": true,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "evidence_items",
+      "column": "repo_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "conversations",
+      "parent_column": "id",
+      "child": "evidence_items",
+      "column": "conversation_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "knowledge_graph_edges",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "recall_events",
+      "column": "repo_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "conversations",
+      "parent_column": "id",
+      "child": "recall_events",
+      "column": "conversation_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "memory_candidates",
+      "column": "repo_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "conversations",
+      "parent_column": "id",
+      "child": "memory_candidates",
+      "column": "conversation_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "chat_sessions",
+      "parent_column": "id",
+      "child": "memory_candidates",
+      "column": "session_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "agent_runs",
+      "column": "repo_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "conversations",
+      "parent_column": "id",
+      "child": "agent_runs",
+      "column": "conversation_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "chat_feedback",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": "CASCADE"
+    },
+    {
+      "parent": "conversations",
+      "parent_column": "id",
+      "child": "chat_feedback",
+      "column": "conversation_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": "CASCADE"
+    },
+    {
+      "parent": "chat_messages",
+      "parent_column": "id",
+      "child": "chat_feedback",
+      "column": "assistant_message_id",
+      "nullable": false,
+      "unique": true,
+      "ondelete": "CASCADE"
+    },
+    {
+      "parent": "agent_runs",
+      "parent_column": "id",
+      "child": "chat_feedback",
+      "column": "run_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": "SET NULL"
+    },
+    {
+      "parent": "users",
+      "parent_column": "id",
+      "child": "chat_feedback",
+      "column": "user_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": "SET NULL"
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "agent_workflow_runs",
+      "column": "repo_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "conversations",
+      "parent_column": "id",
+      "child": "agent_workflow_runs",
+      "column": "conversation_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "agent_workflow_runs",
+      "parent_column": "id",
+      "child": "agent_task_runs",
+      "column": "workflow_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "action_drafts",
+      "column": "repo_id",
+      "nullable": false,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "users",
+      "parent_column": "id",
+      "child": "action_drafts",
+      "column": "created_by",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "users",
+      "parent_column": "id",
+      "child": "action_drafts",
+      "column": "confirmed_by",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "users",
+      "parent_column": "id",
+      "child": "audit_logs",
+      "column": "user_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    },
+    {
+      "parent": "repositories",
+      "parent_column": "id",
+      "child": "audit_logs",
+      "column": "repo_id",
+      "nullable": true,
+      "unique": false,
+      "ondelete": null
+    }
+  ],
+  "logical_relations": [
+    {
+      "parent": "repositories",
+      "child": "workspaces",
+      "label": "repo_ids JSON",
+      "cardinality": "}o..o{",
+      "source": "backend/app/api/routes/workspaces.py",
+      "note": "仓库列表保存于 JSON，创建时校验；无关联中间表、无 FK。"
+    },
+    {
+      "parent": "chat_messages",
+      "child": "chat_sessions",
+      "label": "user_message_id",
+      "source": "backend/app/services/chat_memory.py",
+      "note": "普通 UUID，封存时由 ChatMemoryService 写入。"
+    },
+    {
+      "parent": "chat_messages",
+      "child": "chat_sessions",
+      "label": "assistant_message_id",
+      "source": "backend/app/services/chat_memory.py",
+      "note": "普通 UUID，与 ChatFeedback.assistant_message_id 的真实 FK 不同。"
+    },
+    {
+      "parent": "knowledge_source_documents",
+      "child": "documents",
+      "label": "source_id when knowledge_file",
+      "source": "backend/app/services/rag/document_processing.py",
+      "note": "source_type=knowledge_file 且 source_id 为上传原文 ID；其他来源不一定有原文表行。"
+    },
+    {
+      "parent": "issues",
+      "child": "documents",
+      "label": "source_id when issue",
+      "source": "backend/app/services/rag/indexing.py",
+      "note": "多态来源标识，非 FK。"
+    },
+    {
+      "parent": "pull_requests",
+      "child": "documents",
+      "label": "source_id when pull_request",
+      "source": "backend/app/services/rag/indexing.py",
+      "note": "多态来源标识，非 FK。"
+    },
+    {
+      "parent": "workflow_runs",
+      "child": "documents",
+      "label": "source_id when workflow_run",
+      "source": "backend/app/services/rag/indexing.py",
+      "note": "多态来源标识，非 FK。"
+    },
+    {
+      "parent": "pull_requests",
+      "child": "code_symbols",
+      "label": "pr_id",
+      "source": "backend/app/services/code_analysis.py",
+      "note": "PR 分析范围标识，普通 UUID，可空。"
+    },
+    {
+      "parent": "pull_requests",
+      "child": "code_relations",
+      "label": "pr_id",
+      "source": "backend/app/services/code_analysis.py",
+      "note": "PR 分析范围标识，普通 UUID，可空。"
+    },
+    {
+      "parent": "repositories",
+      "child": "eval_runs",
+      "label": "result_json.repo_id for RAG",
+      "source": "backend/app/api/routes/evaluations.py",
+      "note": "RAG 评估任务的仓库标识存放在 JSON；普通 eval 可没有该值。"
+    },
+    {
+      "parent": "issues",
+      "child": "analysis_results",
+      "label": "target_id when issue",
+      "source": "backend/app/api/routes/issues.py",
+      "note": "按 target_type 解释的多态 UUID。"
+    },
+    {
+      "parent": "pull_requests",
+      "child": "analysis_results",
+      "label": "target_id when pull_request",
+      "source": "backend/app/api/routes/pull_requests.py",
+      "note": "按 target_type 解释的多态 UUID。"
+    },
+    {
+      "parent": "workflow_runs",
+      "child": "analysis_results",
+      "label": "target_id when workflow_run",
+      "source": "backend/app/api/routes/ci.py",
+      "note": "按 target_type 解释的多态 UUID。"
+    }
+  ],
+  "notes": [
+    "Mermaid .. is non-identifying relationship, not proof that an FK is absent; read FK/LOGICAL labels.",
+    "The ORM property meta maps to SQL column metadata.",
+    "All UUID columns use SQLAlchemy Uuid; concrete database storage differs by dialect.",
+    "Timestamp tz denotes timezone=True in the declaration; database-specific behavior still applies.",
+    "Nullable unique repo_id in thread_memories does not imply a single NULL row on all databases.",
+    "JSON fields can contain additional associations not expanded as SQL tables.",
+    "ModelProviderSelection and ChatFeedback declare ON DELETE actions. Read ORM cascades and application cleanup separately.",
+    "All 36 ORM tables are represented; bridges repeat PKs for cross-domain navigation.",
+    "ER render direction is controlled by er.layoutDirection; legacy parser does not support direction syntax. ChatMessage to ChatSession combines two logical field references on one rendered edge; the logical_relations list retains both source associations."
+  ],
+  "tables": [
+    {
+      "table": "agent_settings",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "agent_id",
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "enabled",
+          "type": "BOOLEAN",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "model_providers",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(120)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "base_url",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "protocol",
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "api_key_encrypted",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "models",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "default_model",
+          "type": "VARCHAR(300)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "model_provider_selection",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "provider_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": [
+            {
+              "target": "model_providers.id",
+              "ondelete": "SET NULL"
+            }
+          ]
+        },
+        {
+          "name": "model",
+          "type": "VARCHAR(300)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "retrieval_model_settings",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "kind",
+          "type": "VARCHAR(20)",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "configuration",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "api_key_encrypted",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "milvus_token_encrypted",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "revision",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "users",
+      "detail_diagram": "05a_sessions_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(200)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "role",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "github_token_encrypted",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "repositories",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "owner",
+          "type": "VARCHAR(200)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(200)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "full_name",
+          "type": "VARCHAR(400)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": true,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "provider",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "api_base_url",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "clone_url",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "local_path",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "checkout_mode",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "github_token_encrypted",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "default_branch",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "github_id",
+          "type": "BIGINT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "last_sync_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "workspaces",
+      "detail_diagram": "05a_sessions_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(200)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_ids",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_by",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "users.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "project_index_states",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": true,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "fingerprint",
+          "type": "VARCHAR(200)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "last_scan_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "snoozed_until",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "docs_indexed",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "docs_total",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "error_message",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "summary_json",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "conversations",
+      "detail_diagram": "05a_sessions_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR(300)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "message_count",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "issues",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "github_issue_id",
+          "type": "BIGINT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "number",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR(500)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "body",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "state",
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "labels",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "author",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "assignees",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "closed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "pull_requests",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "github_pr_id",
+          "type": "BIGINT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "number",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR(500)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "body",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "state",
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "author",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "base_branch",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "head_branch",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "merged_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "pr_files",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "pr_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "pull_requests.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "filename",
+          "type": "VARCHAR(500)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "additions",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "deletions",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "patch",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "pr_review_comments",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "pr_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "pull_requests.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "github_comment_id",
+          "type": "BIGINT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "body",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "path",
+          "type": "VARCHAR(500)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "line",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "author",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "workflow_runs",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "github_run_id",
+          "type": "BIGINT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(300)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "conclusion",
+          "type": "VARCHAR(80)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "html_url",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "jobs",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "logs_text",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "analysis_results",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "target_type",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "target_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "analysis_type",
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "input_snapshot",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "result_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "model_name",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "documents",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "source_type",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "source_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR(500)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "content",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "metadata",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "knowledge_base_configs",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": true,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "embedding_provider",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "embedding_model",
+          "type": "VARCHAR(240)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "embedding_dimensions",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "retrieval_method",
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "rerank_enabled",
+          "type": "BOOLEAN",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "rerank_provider",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "rerank_model",
+          "type": "VARCHAR(240)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "top_k",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "score_threshold_enabled",
+          "type": "BOOLEAN",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "score_threshold",
+          "type": "FLOAT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "chunk_size",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "chunk_overlap",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "knowledge_source_documents",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(500)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "source_type",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "stored_path",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "content_type",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "checksum",
+          "type": "VARCHAR(64)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "file_size",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "character_count",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "chunk_count",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "error_message",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "completed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "retrieval_test_runs",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "query",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "retrieval_config",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "results_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "duration_ms",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "code_symbols",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "path",
+          "type": "VARCHAR(500)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(300)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "kind",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "language",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "start_line",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "end_line",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "branch",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "commit_sha",
+          "type": "VARCHAR(120)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "pr_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "pr_number",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "metadata",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "code_relations",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "source_symbol_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "code_symbols.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "target_symbol_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "code_symbols.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "source_name",
+          "type": "VARCHAR(300)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "target_name",
+          "type": "VARCHAR(300)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "relation_type",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "path",
+          "type": "VARCHAR(500)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "branch",
+          "type": "VARCHAR(200)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "pr_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "pr_number",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "metadata",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "chat_messages",
+      "detail_diagram": "05a_sessions_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "conversation_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "conversations.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "role",
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "content",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "route",
+          "type": "VARCHAR(100)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "tool_calls",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "metadata",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "chat_sessions",
+      "detail_diagram": "05a_sessions_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "conversation_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "conversations.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "user_message_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "assistant_message_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "route",
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "transcript_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "digest",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "sealed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "thread_memories",
+      "detail_diagram": "05a_sessions_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": true,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "summary",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "facts",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "decisions",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "open_questions",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "tasks",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "user_preferences",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_context",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "citations",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "sessions_incorporated",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "conversation_memories",
+      "detail_diagram": "05a_sessions_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "conversation_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": true,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "conversations.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "summary",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "facts",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "decisions",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "open_questions",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "tasks",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "user_preferences",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_context",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "citations",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "sessions_incorporated",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "evidence_items",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "conversation_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "conversations.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "source_type",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "source_id",
+          "type": "VARCHAR(120)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR(500)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "content",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "metadata",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "knowledge_graph_edges",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "from_type",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "from_id",
+          "type": "VARCHAR(180)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "to_type",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "to_id",
+          "type": "VARCHAR(180)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "relation",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "confidence",
+          "type": "FLOAT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR(120)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "metadata",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "recall_events",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "conversation_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "conversations.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "tool_name",
+          "type": "VARCHAR(120)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "query",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "scope",
+          "type": "VARCHAR(120)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "mode",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "result_count",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "results_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "citations_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "metadata",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "memory_candidates",
+      "detail_diagram": "05a_sessions_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "conversation_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "conversations.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "session_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "chat_sessions.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "kind",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR(500)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "content",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR(120)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "metadata",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "reviewed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "agent_runs",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "conversation_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "conversations.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "user_message",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "route",
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "tool_calls",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "final_answer",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "chat_feedback",
+      "detail_diagram": "05a_sessions_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": "CASCADE"
+            }
+          ]
+        },
+        {
+          "name": "conversation_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "conversations.id",
+              "ondelete": "CASCADE"
+            }
+          ]
+        },
+        {
+          "name": "assistant_message_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": true,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "chat_messages.id",
+              "ondelete": "CASCADE"
+            }
+          ]
+        },
+        {
+          "name": "run_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "agent_runs.id",
+              "ondelete": "SET NULL"
+            }
+          ]
+        },
+        {
+          "name": "user_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "users.id",
+              "ondelete": "SET NULL"
+            }
+          ]
+        },
+        {
+          "name": "rating",
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "reason",
+          "type": "VARCHAR(80)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "comment",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "review_status",
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "review_note",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "notification_status",
+          "type": "VARCHAR(40)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "notification_error",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "notified_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "reviewed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "agent_workflow_runs",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "conversation_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "conversations.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "goal",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "spec_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "observation_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "final_answer",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "metrics",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "completed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "agent_task_runs",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "workflow_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "agent_workflow_runs.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "task_id",
+          "type": "VARCHAR(120)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "agent_name",
+          "type": "VARCHAR(120)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "task_type",
+          "type": "VARCHAR(120)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "claim_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "input_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "result_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "error",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "started_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "completed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "eval_runs",
+      "detail_diagram": "05b_knowledge_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(200)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "result_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "action_drafts",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "draft_type",
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "target_type",
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "target_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR(300)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "content",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "risk_level",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_by",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "users.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "confirmed_by",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "users.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "executed_at",
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "execution_result",
+          "type": "JSON",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "error_message",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "metadata",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "updated_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        }
+      ]
+    },
+    {
+      "table": "audit_logs",
+      "detail_diagram": "05c_runtime_detail",
+      "columns": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "nullable": false,
+          "primary_key": true,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "user_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "users.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "repo_id",
+          "type": "UUID",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": [
+            {
+              "target": "repositories.id",
+              "ondelete": null
+            }
+          ]
+        },
+        {
+          "name": "action",
+          "type": "VARCHAR(160)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "target_type",
+          "type": "VARCHAR(100)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "target_id",
+          "type": "VARCHAR(120)",
+          "nullable": true,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(80)",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        },
+        {
+          "name": "request_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "result_json",
+          "type": "JSON",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": false,
+          "foreign_keys": []
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "primary_key": false,
+          "unique": false,
+          "index": true,
+          "foreign_keys": []
+        }
+      ]
+    }
+  ],
+  "diagrams": {
+    "05a_sessions_detail": {
+      "title": "会话、工作区、记忆与反馈字段",
+      "tables": [
+        "users",
+        "workspaces",
+        "conversations",
+        "chat_messages",
+        "chat_sessions",
+        "thread_memories",
+        "conversation_memories",
+        "memory_candidates",
+        "chat_feedback"
+      ],
+      "bridge_tables": [
+        "repositories",
+        "agent_runs"
+      ],
+      "notes": [
+        "users 仅保存演示用户及角色，不代表已实现登录。",
+        "chat_sessions 的 user_message_id 和 assistant_message_id 是普通 UUID；关系由服务维护。",
+        "thread_memories.repo_id 可空且唯一；唯一约束对 NULL 的处理由数据库决定。"
+      ],
+      "logical_relations": [
+        {
+          "parent": "repositories",
+          "child": "workspaces",
+          "label": "repo_ids JSON",
+          "cardinality": "}o..o{",
+          "source": "backend/app/api/routes/workspaces.py",
+          "note": "仓库列表保存于 JSON，创建时校验；无关联中间表、无 FK。"
+        },
+        {
+          "parent": "chat_messages",
+          "child": "chat_sessions",
+          "label": "user_message_id",
+          "source": "backend/app/services/chat_memory.py",
+          "note": "普通 UUID，封存时由 ChatMemoryService 写入。"
+        },
+        {
+          "parent": "chat_messages",
+          "child": "chat_sessions",
+          "label": "assistant_message_id",
+          "source": "backend/app/services/chat_memory.py",
+          "note": "普通 UUID，与 ChatFeedback.assistant_message_id 的真实 FK 不同。"
+        }
+      ],
+      "rendering_notes": [
+        "One displayed chat_messages to chat_sessions edge represents user_message_id and assistant_message_id; both logical associations remain separately listed."
+      ]
+    },
+    "05b_knowledge_detail": {
+      "title": "知识、检索、代码图与评估字段",
+      "tables": [
+        "project_index_states",
+        "documents",
+        "retrieval_model_settings",
+        "knowledge_base_configs",
+        "knowledge_source_documents",
+        "retrieval_test_runs",
+        "code_symbols",
+        "code_relations",
+        "evidence_items",
+        "knowledge_graph_edges",
+        "recall_events",
+        "eval_runs"
+      ],
+      "bridge_tables": [
+        "repositories",
+        "conversations",
+        "pull_requests"
+      ],
+      "notes": [
+        "documents 保存文本片段和 metadata。向量由配置的 Milvus 或同一个业务 PostgreSQL 中的 pgvector 表保存。",
+        "pgvector 表在首次写入时按需创建，属于运行时 DDL，不计入 ORM 表总数。",
+        "documents.source_type + source_id 是多态来源，knowledge_file 时可指向上传文档。",
+        "knowledge_graph_edges 的 from/to 端点为应用层多态标识，可能对应文档组或文件，不是 FK。",
+        "eval_runs 无 repo_id 列，RAG 任务的仓库范围和状态存放在 result_json。"
+      ],
+      "logical_relations": [
+        {
+          "parent": "knowledge_source_documents",
+          "child": "documents",
+          "label": "source_id when knowledge_file",
+          "source": "backend/app/services/rag/document_processing.py",
+          "note": "source_type=knowledge_file 且 source_id 为上传原文 ID；其他来源不一定有原文表行。"
+        },
+        {
+          "parent": "pull_requests",
+          "child": "documents",
+          "label": "source_id when pull_request",
+          "source": "backend/app/services/rag/indexing.py",
+          "note": "多态来源标识，非 FK。"
+        },
+        {
+          "parent": "pull_requests",
+          "child": "code_symbols",
+          "label": "pr_id",
+          "source": "backend/app/services/code_analysis.py",
+          "note": "PR 分析范围标识，普通 UUID，可空。"
+        },
+        {
+          "parent": "pull_requests",
+          "child": "code_relations",
+          "label": "pr_id",
+          "source": "backend/app/services/code_analysis.py",
+          "note": "PR 分析范围标识，普通 UUID，可空。"
+        },
+        {
+          "parent": "repositories",
+          "child": "eval_runs",
+          "label": "result_json.repo_id for RAG",
+          "source": "backend/app/api/routes/evaluations.py",
+          "note": "RAG 评估任务的仓库标识存放在 JSON；普通 eval 可没有该值。"
+        }
+      ],
+      "runtime_tables": [
+        {
+          "table": "rag_document_vectors",
+          "source": "backend/app/services/rag/pgvector_store.py",
+          "columns": [
+            {
+              "name": "collection_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "document_id",
+              "type": "UUID",
+              "nullable": false,
+              "index": true,
+              "foreign_keys": [
+                {
+                  "target": "documents.id",
+                  "ondelete": "CASCADE"
+                }
+              ]
+            },
+            {
+              "name": "embedding",
+              "type": "VECTOR",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "collection_name",
+            "document_id"
+          ]
+        }
+      ]
+    },
+    "05c_runtime_detail": {
+      "title": "仓库快照、Agent 配置、工程执行与审计字段",
+      "tables": [
+        "agent_settings",
+        "model_providers",
+        "model_provider_selection",
+        "repositories",
+        "issues",
+        "pull_requests",
+        "pr_files",
+        "pr_review_comments",
+        "workflow_runs",
+        "analysis_results",
+        "agent_runs",
+        "agent_workflow_runs",
+        "agent_task_runs",
+        "action_drafts",
+        "audit_logs"
+      ],
+      "bridge_tables": [
+        "users",
+        "conversations"
+      ],
+      "notes": [
+        "workflow_runs 是 GitHub CI 快照；agent_workflow_runs 是本地工程编排运行，两者不同。",
+        "analysis_results、action_drafts、audit_logs 的目标采用类型加 ID，未声明目标表 FK。",
+        "JSON 任务依赖、工具事件、输入输出是文档字段，不是独立关系表。",
+        "只列模型声明的 ondelete；ORM delete-orphan 和路由显式清理由代码另行控制。",
+        "model_provider_selection 在服务中使用 id=1 保存当前本机默认模型。"
+      ],
+      "logical_relations": [
+        {
+          "parent": "issues",
+          "child": "analysis_results",
+          "label": "target_id when issue",
+          "source": "backend/app/api/routes/issues.py",
+          "note": "按 target_type 解释的多态 UUID。"
+        },
+        {
+          "parent": "pull_requests",
+          "child": "analysis_results",
+          "label": "target_id when pull_request",
+          "source": "backend/app/api/routes/pull_requests.py",
+          "note": "按 target_type 解释的多态 UUID。"
+        },
+        {
+          "parent": "workflow_runs",
+          "child": "analysis_results",
+          "label": "target_id when workflow_run",
+          "source": "backend/app/api/routes/ci.py",
+          "note": "按 target_type 解释的多态 UUID。"
+        }
+      ]
+    },
+    "05_entity_relationship": {
+      "title": "数据模型关系总图 · 36 张 ORM 表",
+      "tables": [
+        "agent_settings",
+        "model_providers",
+        "model_provider_selection",
+        "retrieval_model_settings",
+        "users",
+        "repositories",
+        "workspaces",
+        "project_index_states",
+        "conversations",
+        "issues",
+        "pull_requests",
+        "pr_files",
+        "pr_review_comments",
+        "workflow_runs",
+        "analysis_results",
+        "documents",
+        "knowledge_base_configs",
+        "knowledge_source_documents",
+        "retrieval_test_runs",
+        "code_symbols",
+        "code_relations",
+        "chat_messages",
+        "chat_sessions",
+        "thread_memories",
+        "conversation_memories",
+        "evidence_items",
+        "knowledge_graph_edges",
+        "recall_events",
+        "memory_candidates",
+        "agent_runs",
+        "chat_feedback",
+        "agent_workflow_runs",
+        "agent_task_runs",
+        "eval_runs",
+        "action_drafts",
+        "audit_logs"
+      ],
+      "bridge_tables": [],
+      "logical_relations": [
+        {
+          "parent": "repositories",
+          "child": "workspaces",
+          "label": "repo_ids JSON",
+          "cardinality": "}o..o{",
+          "source": "backend/app/api/routes/workspaces.py",
+          "note": "仓库列表保存于 JSON，创建时校验；无关联中间表、无 FK。"
+        },
+        {
+          "parent": "chat_messages",
+          "child": "chat_sessions",
+          "label": "user_message_id",
+          "source": "backend/app/services/chat_memory.py",
+          "note": "普通 UUID，封存时由 ChatMemoryService 写入。"
+        },
+        {
+          "parent": "chat_messages",
+          "child": "chat_sessions",
+          "label": "assistant_message_id",
+          "source": "backend/app/services/chat_memory.py",
+          "note": "普通 UUID，与 ChatFeedback.assistant_message_id 的真实 FK 不同。"
+        },
+        {
+          "parent": "knowledge_source_documents",
+          "child": "documents",
+          "label": "source_id when knowledge_file",
+          "source": "backend/app/services/rag/document_processing.py",
+          "note": "source_type=knowledge_file 且 source_id 为上传原文 ID；其他来源不一定有原文表行。"
+        },
+        {
+          "parent": "repositories",
+          "child": "eval_runs",
+          "label": "result_json.repo_id for RAG",
+          "source": "backend/app/api/routes/evaluations.py",
+          "note": "RAG 评估任务的仓库标识存放在 JSON；普通 eval 可没有该值。"
+        }
+      ],
+      "rendering_notes": [
+        "One displayed chat_messages to chat_sessions edge represents user_message_id and assistant_message_id; both logical associations remain separately listed."
+      ]
+    }
+  }
+}

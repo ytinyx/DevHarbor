@@ -1,0 +1,13 @@
+.workspace-shell .app-main { display: flex; flex-direction: column; height: 100dvh; min-height: 0; }
+.workspace-shell .app-topbar { height: 48px; flex-shrink: 0; }
+.workspace-shell .app-content.workspace-content { flex: 1; min-height: 0; width: 100%; padding: 12px; }
+.workspace-layout { height: 100%; min-height: 0; }
+.workspace-layout .workspace-main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+.workspace-layout .workspace-reference, .workspace-layout .workspace-resizer { display: none; }
+.workspace-layout .reference-open .workspace-reference { display: flex; position: absolute; inset: 0 0 0 auto; width: min(100%, 460px); z-index: 15; border-left: 1px solid var(--line, #34372e); box-shadow: -12px 0 32px #0005; }
+@media (min-width: 1280px) {
+  .workspace-layout .workspace-main.reference-open { grid-template-columns: minmax(0, 1fr) 6px min(42%, var(--reference-width)); }
+  .workspace-layout .reference-open .workspace-reference { position: static; width: auto; grid-column: 3; grid-row: 1 / span 2; box-shadow: none; border: 0; }
+  .workspace-layout .reference-open .workspace-resizer { display: block; }
+}
+@media (max-width: 639px) { .workspace-shell .app-content.workspace-content { padding: 8px; } }

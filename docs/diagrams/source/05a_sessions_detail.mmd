@@ -1,0 +1,149 @@
+%% 会话、工作区、记忆与反馈字段
+%% Source: backend/app/db/models.py; SQLAlchemy metadata, not a live database inspection.
+%% PK=primary key; FK=declared ForeignKey; UK=single-column unique; IDX=index; NULL=nullable.
+%% Mermaid .. means non-identifying relationship. FK/LOGICAL labels distinguish constraints, not line style.
+%% users 仅保存演示用户及角色，不代表已实现登录。
+%% chat_sessions 的 user_message_id 和 assistant_message_id 是普通 UUID；关系由服务维护。
+%% thread_memories.repo_id 可空且唯一；唯一约束对 NULL 的处理由数据库决定。
+erDiagram
+    %% 方向由渲染器 er.layoutDirection 配置；旧版 ER 解析器不接受 direction 指令。
+    accTitle: DevHarbor 会话、工作区、记忆与反馈字段
+    accDescr: 以当前模型声明为准。NOT NULL 与 NULL 表示可空性。FK 为声明外键，LOGICAL 为应用层关联；桥接实体只展示主键。
+    users {
+        UUID id PK "NOT NULL"
+        VARCHAR(200) name "NOT NULL"
+        VARCHAR(80) role "NOT NULL; IDX"
+        TEXT github_token_encrypted "NULL"
+        TIMESTAMP created_at "NOT NULL; tz"
+    }
+    workspaces {
+        UUID id PK "NOT NULL"
+        VARCHAR(200) name "NOT NULL; IDX"
+        TEXT description "NULL"
+        JSON repo_ids "NOT NULL; LOGICAL repo IDs JSON"
+        UUID created_by FK "NULL; IDX; to users.id"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+        TIMESTAMP updated_at "NOT NULL; tz"
+    }
+    conversations {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        VARCHAR(300) title "NOT NULL"
+        VARCHAR(80) status "NOT NULL; IDX"
+        INTEGER message_count "NOT NULL"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+        TIMESTAMP updated_at "NOT NULL; IDX; tz"
+    }
+    chat_messages {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NULL; IDX; to repositories.id"
+        UUID conversation_id FK "NULL; IDX; to conversations.id"
+        VARCHAR(40) role "NOT NULL; IDX"
+        TEXT content "NOT NULL"
+        VARCHAR(100) route "NULL"
+        JSON tool_calls "NOT NULL"
+        JSON metadata "NOT NULL; Python attr meta"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+    }
+    chat_sessions {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NULL; IDX; to repositories.id"
+        UUID conversation_id FK "NULL; IDX; to conversations.id"
+        UUID user_message_id "NULL; IDX; LOGICAL chat_messages.id"
+        UUID assistant_message_id "NULL; IDX; LOGICAL chat_messages.id"
+        VARCHAR(100) route "NOT NULL"
+        JSON transcript_json "NOT NULL"
+        TEXT digest "NOT NULL"
+        VARCHAR(80) status "NOT NULL; IDX"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+        TIMESTAMP sealed_at "NULL; tz"
+    }
+    thread_memories {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK, UK "NULL; IDX; to repositories.id"
+        TEXT summary "NOT NULL"
+        JSON facts "NOT NULL"
+        JSON decisions "NOT NULL"
+        JSON open_questions "NOT NULL"
+        JSON tasks "NOT NULL"
+        JSON user_preferences "NOT NULL"
+        JSON repo_context "NOT NULL"
+        JSON citations "NOT NULL"
+        INTEGER sessions_incorporated "NOT NULL"
+        TIMESTAMP updated_at "NOT NULL; tz"
+    }
+    conversation_memories {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        UUID conversation_id FK, UK "NOT NULL; IDX; to conversations.id"
+        TEXT summary "NOT NULL"
+        JSON facts "NOT NULL"
+        JSON decisions "NOT NULL"
+        JSON open_questions "NOT NULL"
+        JSON tasks "NOT NULL"
+        JSON user_preferences "NOT NULL"
+        JSON repo_context "NOT NULL"
+        JSON citations "NOT NULL"
+        INTEGER sessions_incorporated "NOT NULL"
+        TIMESTAMP updated_at "NOT NULL; tz"
+    }
+    memory_candidates {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NULL; IDX; to repositories.id"
+        UUID conversation_id FK "NULL; IDX; to conversations.id"
+        UUID session_id FK "NULL; IDX; to chat_sessions.id"
+        VARCHAR(80) kind "NOT NULL; IDX"
+        VARCHAR(500) title "NOT NULL"
+        TEXT content "NOT NULL"
+        VARCHAR(80) status "NOT NULL; IDX"
+        VARCHAR(120) source "NOT NULL"
+        JSON metadata "NOT NULL; Python attr meta"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+        TIMESTAMP reviewed_at "NULL; tz"
+    }
+    chat_feedback {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id; ON DELETE CASCADE"
+        UUID conversation_id FK "NOT NULL; IDX; to conversations.id; ON DELETE CASCADE"
+        UUID assistant_message_id FK, UK "NOT NULL; IDX; to chat_messages.id; ON DELETE CASCADE"
+        UUID run_id FK "NULL; IDX; to agent_runs.id; ON DELETE SET NULL"
+        UUID user_id FK "NULL; IDX; to users.id; ON DELETE SET NULL"
+        VARCHAR(40) rating "NOT NULL; IDX"
+        VARCHAR(80) reason "NULL; IDX"
+        TEXT comment "NULL"
+        VARCHAR(40) review_status "NOT NULL; IDX"
+        TEXT review_note "NULL"
+        VARCHAR(40) notification_status "NOT NULL; IDX"
+        TEXT notification_error "NULL"
+        TIMESTAMP notified_at "NULL; tz"
+        TIMESTAMP reviewed_at "NULL; tz"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+        TIMESTAMP updated_at "NOT NULL; IDX; tz"
+    }
+    repositories {
+        UUID id PK "bridge; full fields in other detail"
+    }
+    agent_runs {
+        UUID id PK "bridge; full fields in other detail"
+    }
+
+    users |o..o{ workspaces : "FK created_by"
+    repositories ||..o{ conversations : "FK repo_id"
+    repositories |o..o{ chat_messages : "FK repo_id"
+    conversations |o..o{ chat_messages : "FK conversation_id"
+    repositories |o..o{ chat_sessions : "FK repo_id"
+    conversations |o..o{ chat_sessions : "FK conversation_id"
+    repositories |o..o| thread_memories : "FK repo_id"
+    repositories ||..o{ conversation_memories : "FK repo_id"
+    conversations ||..o| conversation_memories : "FK conversation_id"
+    repositories |o..o{ memory_candidates : "FK repo_id"
+    conversations |o..o{ memory_candidates : "FK conversation_id"
+    chat_sessions |o..o{ memory_candidates : "FK session_id"
+    repositories ||..o{ chat_feedback : "FK repo_id"
+    conversations ||..o{ chat_feedback : "FK conversation_id"
+    chat_messages ||..o| chat_feedback : "FK assistant_message_id"
+    agent_runs |o..o{ chat_feedback : "FK run_id"
+    users |o..o{ chat_feedback : "FK user_id"
+    repositories }o..o{ workspaces : "LOGICAL repo_ids JSON"
+    %% 同一对实体的两条逻辑关联合并显示；字段仍分别保留，无数据库 FK。
+    chat_messages |o..o{ chat_sessions : "LOGICAL user_message_id / assistant_message_id"

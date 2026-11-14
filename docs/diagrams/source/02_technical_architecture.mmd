@@ -1,0 +1,43 @@
+%% 依据：frontend/electron/main.cjs / preload.cjs、frontend/lib/api.ts、backend/desktop.py、backend/app/main.py、backend/app/services/rag/vector_store.py、docker-compose.yml。
+flowchart TB
+  subgraph ENTRY["客户端入口 · 共用 React 页面"]
+    direction LR
+    BROWSER["浏览器<br/>开发页面由 Vite 提供 · 5174"]
+    WINDOW["Electron BrowserWindow<br/>开发 5174 · 打包 app://localhost"]
+    HOST["Electron 主进程<br/>启动、检查与停止本机后端"]
+    WINDOW -. 受限 preload IPC：API 地址与启动令牌 .-> HOST
+  end
+  subgraph RUNTIME["FastAPI 后端 · 启动实例按入口独立"]
+    direction LR
+    WEB["Web 后端<br/>开发默认 8000 · CORS"]
+    DESKTOP["桌面后端<br/>127.0.0.1 动态端口<br/>CORS 与 X-DevHarbor-Token"]
+    SIDE["桌面数据库选择<br/>读取加密的连接配置<br/>配置变更后重启生效"]
+    SERVICE["各后端运行相同服务<br/>ChatAgent · 工作流 · RAG · 周期同步<br/>评估与入库使用进程内 BackgroundTasks"]
+    MCP["记忆 MCP 子进程<br/>stdin / stdout · 跟随活动业务库"]
+    WEB & DESKTOP --> SERVICE
+    DESKTOP --> SIDE
+    SERVICE -->|JSON-RPC / stdio| MCP
+  end
+  subgraph DATA["持久化 · 依启动方式和设置选择"]
+    direction LR
+    SQLITE_WEB[("演示 SQLite<br/>.data/devharbor-local-demo.db")]
+    SQLITE_DESKTOP[("桌面 SQLite<br/>Electron userData/backend/devharbor.db")]
+    PG[("PostgreSQL<br/>业务数据与文档<br/>可选 vector 扩展")]
+    VEC["RAG 检索<br/>BM25 读取业务库中的文档片段<br/>按配置启用一个向量存储"]
+    MILVUS[("Milvus standalone<br/>依赖 etcd 与 MinIO")]
+    PGVECTOR[("pgvector<br/>与文档共用业务 PostgreSQL")]
+    VEC --> MILVUS & PGVECTOR
+    PGVECTOR --- PG
+  end
+  REMOTE["可选远端服务<br/>GitHub API：仓库快照与已确认写入<br/>模型接口：聊天 · Embedding · Rerank · Judge"]
+  BROWSER -->|HTTP / SSE| WEB
+  HOST -->|启动并健康检查| DESKTOP
+  WINDOW -->|带启动令牌的 HTTP / SSE| DESKTOP
+  WEB -->|演示脚本| SQLITE_WEB
+  WEB -->|按配置| PG
+  SIDE -->|默认；启动 PostgreSQL 失败时回退| SQLITE_DESKTOP
+  SIDE -->|可选| PG
+  SERVICE --> VEC
+  SERVICE -->|HTTPS| REMOTE
+  NOTE["Compose 提供 PostgreSQL 与 Milvus 基础设施，应用另行启动。<br/>桌面默认关闭 Embedding，使用 BM25。启用 pgvector 需当前业务库支持 vector 扩展。"]
+  PG & MILVUS -.-> NOTE

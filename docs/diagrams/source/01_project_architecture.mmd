@@ -1,0 +1,41 @@
+%% 依据：backend/app/main.py、api/routes、services/agents、services/rag、services/chat_memory.py、db/models.py。
+flowchart TB
+  USER["连接仓库 · 对话 · 检索 · 审查 · 评估"]
+  UI["React 工作台 · Web / Electron<br/>workspace · chat · issues / PR / CI · rag · evals<br/>lib/api.ts / rag.ts：HTTP 与 SSE"]
+  API["FastAPI · main.py / api/routes/<br/>请求校验、路由、仓库与会话范围<br/>桌面后端额外校验本机启动令牌"]
+  USER --> UI --> API
+
+  subgraph CHAT_LANE["对话与工程审查"]
+    CONTEXT["chat_memory.py · ContextAssembler<br/>历史、记忆、证据与预算<br/>SkillRegistry 加载任务指令"]
+    CHAT["chat_agent.py<br/>LangGraph：模型决策与工具循环"]
+    FLOW["workflow_orchestrator.py<br/>依赖调度、超时、有限重规划<br/>Planner / Observer / Synthesis"]
+    ANALYZE["专题分析与读取工具<br/>Issue / PR / CI / Report / Safety<br/>当前 checkout 与 MCP 记忆"]
+    CONTEXT --> CHAT
+    CHAT -->|按需调用| FLOW & ANALYZE
+    FLOW --> ANALYZE
+  end
+
+  subgraph RAG_LANE["知识检索与评估"]
+    RAG["rag.py / services/rag/<br/>文档入库、重排、引用问答<br/>BM25 + 可选向量召回"]
+    EVAL["evaluations.py / services/evals/<br/>隔离对话用例、硬规则与 RAGAS"]
+  end
+
+  subgraph REPO_LANE["仓库与协作操作"]
+    SYNC["repos_sync.py / scheduler.py<br/>读取 GitHub 快照，维护本地工作树"]
+    TEAM["workspaces.py / reports.py<br/>按仓库列表聚合工程周报"]
+    DRAFT["action_drafts.py<br/>用户确认 → 权限校验 → GitHub 写入<br/>保存操作结果与审计"]
+  end
+
+  API --> CONTEXT & RAG & EVAL & SYNC & TEAM & DRAFT
+  API -. 已确认的计划 .-> FLOW
+  CHAT -. 检索工具 .-> RAG
+  EVAL -. 逐题调用 .-> CHAT
+  ANALYZE -. SafetyAgent 生成操作草稿 .-> DRAFT
+
+  SQL[("SQLite / PostgreSQL<br/>会话、运行、文档、快照与审计")]
+  VECTOR[("可选向量存储<br/>Milvus / PostgreSQL pgvector")]
+  GITHUB["GitHub REST API<br/>同步读取 · 已确认写入"]
+  RAG -->|正文片段供 BM25 使用| SQL
+  RAG --> VECTOR
+  CONTEXT & TEAM --> SQL
+  SYNC & DRAFT --> GITHUB

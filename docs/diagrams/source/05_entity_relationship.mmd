@@ -1,0 +1,172 @@
+%% 数据模型关系总图 · 36 张 ORM 表
+%% Source: backend/app/db/models.py; SQLAlchemy metadata, not a live database inspection.
+%% PK=primary key; FK=declared ForeignKey; UK=single-column unique; IDX=index; NULL=nullable.
+%% Mermaid .. means non-identifying relationship. FK/LOGICAL labels distinguish constraints, not line style.
+%% 运行时按需创建的 pgvector 表单独展示于 05b。
+%% 总图仅列各表主键；完整字段见 05a、05b、05c。
+%% 全部模型声明 FK 均在总图中显示；只选取少量 LOGICAL 关系以保留可读性。
+erDiagram
+    %% 方向由渲染器 er.layoutDirection 配置；旧版 ER 解析器不接受 direction 指令。
+    accTitle: DevHarbor 数据模型关系总图 · 36 张 ORM 表
+    accDescr: 以当前模型声明为准。NOT NULL 与 NULL 表示可空性。FK 为声明外键，LOGICAL 为应用层关联；桥接实体只展示主键。
+    agent_settings {
+        VARCHAR(100) agent_id PK "NOT NULL"
+    }
+    model_providers {
+        UUID id PK "NOT NULL"
+    }
+    model_provider_selection {
+        INTEGER id PK "NOT NULL"
+    }
+    retrieval_model_settings {
+        VARCHAR(20) kind PK "NOT NULL"
+    }
+    users {
+        UUID id PK "NOT NULL"
+    }
+    repositories {
+        UUID id PK "NOT NULL"
+    }
+    workspaces {
+        UUID id PK "NOT NULL"
+    }
+    project_index_states {
+        UUID id PK "NOT NULL"
+    }
+    conversations {
+        UUID id PK "NOT NULL"
+    }
+    issues {
+        UUID id PK "NOT NULL"
+    }
+    pull_requests {
+        UUID id PK "NOT NULL"
+    }
+    pr_files {
+        UUID id PK "NOT NULL"
+    }
+    pr_review_comments {
+        UUID id PK "NOT NULL"
+    }
+    workflow_runs {
+        UUID id PK "NOT NULL"
+    }
+    analysis_results {
+        UUID id PK "NOT NULL"
+    }
+    documents {
+        UUID id PK "NOT NULL"
+    }
+    knowledge_base_configs {
+        UUID id PK "NOT NULL"
+    }
+    knowledge_source_documents {
+        UUID id PK "NOT NULL"
+    }
+    retrieval_test_runs {
+        UUID id PK "NOT NULL"
+    }
+    code_symbols {
+        UUID id PK "NOT NULL"
+    }
+    code_relations {
+        UUID id PK "NOT NULL"
+    }
+    chat_messages {
+        UUID id PK "NOT NULL"
+    }
+    chat_sessions {
+        UUID id PK "NOT NULL"
+    }
+    thread_memories {
+        UUID id PK "NOT NULL"
+    }
+    conversation_memories {
+        UUID id PK "NOT NULL"
+    }
+    evidence_items {
+        UUID id PK "NOT NULL"
+    }
+    knowledge_graph_edges {
+        UUID id PK "NOT NULL"
+    }
+    recall_events {
+        UUID id PK "NOT NULL"
+    }
+    memory_candidates {
+        UUID id PK "NOT NULL"
+    }
+    agent_runs {
+        UUID id PK "NOT NULL"
+    }
+    chat_feedback {
+        UUID id PK "NOT NULL"
+    }
+    agent_workflow_runs {
+        UUID id PK "NOT NULL"
+    }
+    agent_task_runs {
+        UUID id PK "NOT NULL"
+    }
+    eval_runs {
+        UUID id PK "NOT NULL"
+    }
+    action_drafts {
+        UUID id PK "NOT NULL"
+    }
+    audit_logs {
+        UUID id PK "NOT NULL"
+    }
+
+    model_providers |o..o{ model_provider_selection : "FK provider_id"
+    users |o..o{ workspaces : "FK created_by"
+    repositories ||..o| project_index_states : "FK repo_id"
+    repositories ||..o{ conversations : "FK repo_id"
+    repositories ||..o{ issues : "FK repo_id"
+    repositories ||..o{ pull_requests : "FK repo_id"
+    pull_requests ||..o{ pr_files : "FK pr_id"
+    pull_requests ||..o{ pr_review_comments : "FK pr_id"
+    repositories ||..o{ workflow_runs : "FK repo_id"
+    repositories ||..o{ documents : "FK repo_id"
+    repositories ||..o| knowledge_base_configs : "FK repo_id"
+    repositories ||..o{ knowledge_source_documents : "FK repo_id"
+    repositories ||..o{ retrieval_test_runs : "FK repo_id"
+    repositories ||..o{ code_symbols : "FK repo_id"
+    repositories ||..o{ code_relations : "FK repo_id"
+    code_symbols |o..o{ code_relations : "FK source_symbol_id"
+    code_symbols |o..o{ code_relations : "FK target_symbol_id"
+    repositories |o..o{ chat_messages : "FK repo_id"
+    conversations |o..o{ chat_messages : "FK conversation_id"
+    repositories |o..o{ chat_sessions : "FK repo_id"
+    conversations |o..o{ chat_sessions : "FK conversation_id"
+    repositories |o..o| thread_memories : "FK repo_id"
+    repositories ||..o{ conversation_memories : "FK repo_id"
+    conversations ||..o| conversation_memories : "FK conversation_id"
+    repositories |o..o{ evidence_items : "FK repo_id"
+    conversations |o..o{ evidence_items : "FK conversation_id"
+    repositories ||..o{ knowledge_graph_edges : "FK repo_id"
+    repositories |o..o{ recall_events : "FK repo_id"
+    conversations |o..o{ recall_events : "FK conversation_id"
+    repositories |o..o{ memory_candidates : "FK repo_id"
+    conversations |o..o{ memory_candidates : "FK conversation_id"
+    chat_sessions |o..o{ memory_candidates : "FK session_id"
+    repositories |o..o{ agent_runs : "FK repo_id"
+    conversations |o..o{ agent_runs : "FK conversation_id"
+    repositories ||..o{ chat_feedback : "FK repo_id"
+    conversations ||..o{ chat_feedback : "FK conversation_id"
+    chat_messages ||..o| chat_feedback : "FK assistant_message_id"
+    agent_runs |o..o{ chat_feedback : "FK run_id"
+    users |o..o{ chat_feedback : "FK user_id"
+    repositories |o..o{ agent_workflow_runs : "FK repo_id"
+    conversations |o..o{ agent_workflow_runs : "FK conversation_id"
+    agent_workflow_runs ||..o{ agent_task_runs : "FK workflow_id"
+    repositories ||..o{ action_drafts : "FK repo_id"
+    users |o..o{ action_drafts : "FK created_by"
+    users |o..o{ action_drafts : "FK confirmed_by"
+    users |o..o{ audit_logs : "FK user_id"
+    repositories |o..o{ audit_logs : "FK repo_id"
+    repositories }o..o{ workspaces : "LOGICAL repo_ids JSON"
+    %% 同一对实体的两条逻辑关联合并显示；字段仍分别保留，无数据库 FK。
+    chat_messages |o..o{ chat_sessions : "LOGICAL user_message_id / assistant_message_id"
+    knowledge_source_documents |o..o{ documents : "LOGICAL source_id when knowledge_file"
+    repositories |o..o{ eval_runs : "LOGICAL result_json.repo_id for RAG"

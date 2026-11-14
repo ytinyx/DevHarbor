@@ -1,0 +1,70 @@
+%% 节点声明顺序决定每列的自上而下顺序；连线表示目录归属。
+flowchart TB
+  ROOT["DevHarbor-public/<br/>FastAPI 后端 · Web 与 Electron 桌面界面 · 文档 · 脚本"]
+  ROOT_FILES["仓库根文件<br/>README.md · .env.example · docker-compose.yml"]
+
+  subgraph BACKEND["backend/ · Python 后端工程"]
+    BACKEND_ROOT["backend/<br/>后端依赖、应用、测试与打包"]
+    APP["app/<br/>FastAPI 应用包"]
+    ENTRY["main.py<br/>创建 FastAPI 应用，注册 API 路由"]
+    API["api/<br/>HTTP 接口代码"]
+    ROUTES["routes/<br/>backend/app/api/routes/ · 接收请求，返回结果或 SSE"]
+    CHAT["chat.py<br/>聊天、计划和流式接口"]
+    REPOS["repos.py<br/>仓库接入、同步与管理"]
+    RAG_API["rag.py<br/>知识库文档、检索与问答"]
+    SETTINGS_API["desktop_database.py · retrieval_models.py<br/>桌面数据库连接、Embedding 与向量存储设置"]
+    ENGINEERING_API["issues.py · pull_requests.py · ci.py<br/>Issue、PR 与 CI 接口"]
+    SERVICES["services/<br/>Agent、检索、GitHub 与其他业务逻辑"]
+    AGENTS["agents/<br/>chat_agent.py · workflow_orchestrator.py"]
+    RAG_SERVICE["rag/<br/>混合检索、重排与问答<br/>vector_store.py · pgvector_store.py"]
+    OTHER_SERVICES["llm/ · github/ · evals/<br/>模型调用、GitHub 接入与评估"]
+    DATA_MODEL["db/ · schemas/<br/>数据库模型与会话、接口数据结构"]
+    SUPPORT["core/ · skills/ · mcp/<br/>配置与安全、技能资料、记忆工具服务"]
+    TESTS["tests/<br/>后端回归测试"]
+    BACKEND_SETUP["desktop.py · desktop_database.py<br/>桌面后端、数据库配置<br/>devharbor-core.spec：PyInstaller 打包"]
+
+    BACKEND_ROOT --- APP & BACKEND_SETUP
+    APP --- ENTRY & API & SERVICES & DATA_MODEL & SUPPORT & TESTS
+    API --- ROUTES
+    ROUTES --- CHAT & REPOS & RAG_API & SETTINGS_API & ENGINEERING_API
+    SERVICES --- AGENTS & RAG_SERVICE & OTHER_SERVICES
+  end
+
+  subgraph FRONTEND["frontend/ · 界面与桌面宿主"]
+    FRONTEND_ROOT["frontend/<br/>浏览器和桌面版共用 React 界面"]
+    WEB_ENTRY["main.tsx · App.tsx<br/>React 入口与页面路由"]
+    PAGES["app/<br/>页面、布局与样式"]
+    WORKSPACE["workspace/ · chat/<br/>工作台与聊天"]
+    KNOWLEDGE["rag/ · knowledge/ · settings/<br/>RAG 工作室、知识库和设置"]
+    DATABASE["settings/database/ · settings/retrieval/<br/>桌面数据库与检索模型"]
+    COMPONENTS["components/<br/>共用界面组件"]
+    CLIENT["lib/<br/>api.ts、公共类型与辅助逻辑"]
+    ELECTRON["electron/<br/>main.cjs · preload.cjs · runtime.cjs<br/>窗口、桥接与本机后端进程"]
+    WEB_BUILD["scripts/ · tests/<br/>桌面开发、打包与回归测试"]
+    WEB_CONFIG["package.json · vite.config.ts<br/>依赖、运行命令与构建配置"]
+
+    FRONTEND_ROOT --- WEB_ENTRY & PAGES & COMPONENTS & CLIENT & ELECTRON & WEB_BUILD & WEB_CONFIG
+    PAGES --- WORKSPACE & KNOWLEDGE & DATABASE
+  end
+
+  subgraph DOCS["文档与仓库维护"]
+    DOCS_ROOT["docs/<br/>使用说明、系统设计与图表"]
+    GUIDES["guides/ · architecture/ · api/<br/>使用指南、架构与接口文档"]
+    DIAGRAMS["diagrams/ · assets/ · examples/<br/>离线图集、截图、示例与题集"]
+    SCRIPTS["scripts/<br/>项目级启动、初始化与文档维护"]
+    START["start_rag.ps1 · seed_demo_data.py<br/>启动浏览器演示、初始化演示数据"]
+    PGVECTOR_SETUP["init_pgvector.sql<br/>Compose PostgreSQL 首次初始化扩展"]
+    DOC_TOOLS["documentation-tools/<br/>生成图表和校验文档"]
+    CI_CONFIG[".github/<br/>workflows/ci.yml · dependabot.yml"]
+
+    DOCS_ROOT --- GUIDES & DIAGRAMS
+    SCRIPTS --- START & PGVECTOR_SETUP & DOC_TOOLS
+  end
+
+  subgraph LOCAL["运行时数据 · 按启动方式生成"]
+    BROWSER_DATA[".data/<br/>浏览器演示的 SQLite 数据库和日志"]
+    DESKTOP_DATA["Electron userData/backend/<br/>SQLite、加密的连接配置、仓库与上传文件"]
+  end
+
+  ROOT --- ROOT_FILES & BACKEND_ROOT & FRONTEND_ROOT & DOCS_ROOT & SCRIPTS & CI_CONFIG
+  ROOT -.-> BROWSER_DATA & DESKTOP_DATA

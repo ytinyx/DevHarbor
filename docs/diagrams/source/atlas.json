@@ -1,0 +1,94 @@
+[
+  {
+    "id": "00_project_directory",
+    "number": "00",
+    "title": "项目目录与文件归属",
+    "subtitle": "从仓库根目录找主要源码、接口入口、文档和启动脚本"
+  },
+  {
+    "id": "01_project_architecture",
+    "number": "01",
+    "title": "项目架构与模块职责",
+    "subtitle": "backend / frontend / docs 分工，业务服务与数据访问边界"
+  },
+  {
+    "id": "02_technical_architecture",
+    "number": "02",
+    "title": "技术架构与进程通信",
+    "subtitle": "Web 与 Electron 启动方式、FastAPI、SQLite / PostgreSQL 及可选向量服务"
+  },
+  {
+    "id": "03_execution_flow",
+    "number": "03",
+    "title": "在线执行与工程工作流",
+    "subtitle": "请求、上下文、工具循环、依赖任务编排与结果落盘"
+  },
+  {
+    "id": "04_chat_sequence",
+    "number": "04",
+    "title": "对话与草稿确认时序",
+    "subtitle": "SSE 事件、消息归档与独立的外部操作确认"
+  },
+  {
+    "id": "05_entity_relationship",
+    "number": "05",
+    "title": "业务数据模型 · 关系总图",
+    "subtitle": "36 张模型表；FK 表示模型声明外键，LOGICAL 表示应用逻辑关联",
+    "erDirection": "LR"
+  },
+  {
+    "id": "05a_sessions_detail",
+    "number": "05a",
+    "title": "会话、工作区与记忆 · 字段细节",
+    "subtitle": "真实字段、PK / FK / UK、可空性与普通 UUID 的边界"
+  },
+  {
+    "id": "05b_knowledge_detail",
+    "number": "05b",
+    "title": "知识、索引与评估 · 字段细节",
+    "subtitle": "文档与检索配置、源码符号、知识图谱及评测记录",
+    "erDirection": "LR"
+  },
+  {
+    "id": "05c_runtime_detail",
+    "number": "05c",
+    "title": "仓库、运行与动作 · 字段细节",
+    "subtitle": "GitHub 快照、工程任务、Agent 与模型配置、操作草稿与审计"
+  },
+  {
+    "id": "06_tool_execution",
+    "number": "06",
+    "title": "工具调用与确认执行",
+    "subtitle": "工具 schema、Skill 约束、错误回传与 ActionDraft 确认关口"
+  },
+  {
+    "id": "07_failure_recovery",
+    "number": "07",
+    "title": "失败处理与恢复边界",
+    "subtitle": "超时、依赖失败、重规划、检索降级与外部副作用不确定性"
+  },
+  {
+    "id": "08_context_memory",
+    "number": "08",
+    "title": "上下文、Skill、RAG 与记忆",
+    "subtitle": "预算投影、渐进压缩、原文留存与按任务加载资料"
+  },
+  {
+    "id": "09_task_state",
+    "number": "09",
+    "title": "任务与记录状态",
+    "subtitle": "循环完成状态、工程任务结果与草稿状态分别解释"
+  },
+  {
+    "id": "10_delivery_evaluation",
+    "number": "10",
+    "title": "结果验收与离线评估",
+    "subtitle": "隔离 ChatAgent、证据硬规则、可选 RAGAS 与同基线比较"
+  },
+  {
+    "id": "11_rag_pipeline",
+    "number": "11",
+    "title": "文档入库与 RAG 问答",
+    "subtitle": "分片、向量与 BM25 混合召回、重排、证据门控及引用"
+  }
+]

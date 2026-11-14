@@ -1,0 +1,4 @@
+# Install backend/requirements.txt into the build environment first.
+# The desktop spec excludes optional model-download and evaluation stacks.
+PyInstaller==6.22.3
+pyinstaller-hooks-contrib==2026.10

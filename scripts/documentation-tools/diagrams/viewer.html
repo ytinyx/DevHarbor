@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevHarbor · 架构与流程图集</title>
+<style>
+:root{color-scheme:light;font-family:"Microsoft YaHei","Segoe UI",sans-serif;color:#17334c;background:#eef3f7}*{box-sizing:border-box}body{margin:0;height:100vh;display:flex;flex-direction:column}button,select,input,a{font:inherit}button,select,input,.link{border:1px solid #c7d5df;border-radius:7px;background:#fff;color:#17334c;padding:8px 11px}button,.link{cursor:pointer}button:hover,.link:hover{border-color:#087f8c;background:#eaf7f7}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #51bac6;outline-offset:2px}header{background:#102a40;color:white;padding:21px 28px 19px;display:flex;align-items:center;justify-content:space-between;gap:20px}header h1{font-size:24px;margin:4px 0 8px;letter-spacing:.3px}header p{margin:0;font-size:13px;color:#bdcedc}.eyebrow{font-size:11px;color:#83d7d6;letter-spacing:2px}.header-links{display:flex;gap:10px;white-space:nowrap}.header-links a{color:#daeeee;text-decoration:none;font-size:13px}nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;background:#fff;border-bottom:1px solid #cedce5}#select{max-width:440px;min-width:280px;flex:1}#scaleLabel{min-width:50px;text-align:center;font-size:12px;font-variant-numeric:tabular-nums}#details{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:10px 16px;background:#f7fafc;border-bottom:1px solid #d8e3ea}#search{width:260px;max-width:55vw}#hint{font-size:12px;color:#60778b;margin-left:auto}a.link{text-decoration:none;font-size:13px}.hidden{display:none!important}#workspace{display:flex;min-height:0;flex:1}#viewport{flex:1;min-width:0;overflow:auto;padding:22px;scrollbar-gutter:stable;position:relative}#stage{position:relative;margin:0 auto;background:white;box-shadow:0 5px 30px #17334c13}#diagram{transform-origin:top left;position:absolute;left:0;top:0}#diagram>svg{display:block}#sourcePanel{width:40%;min-width:260px;overflow:auto;background:#102638;color:#dcf1f1;padding:20px;margin:0;font-size:12px;line-height:1.7;white-space:pre-wrap;word-break:break-word}footer{font-size:12px;display:flex;gap:20px;justify-content:space-between;padding:9px 18px;background:white;border-top:1px solid #d8e3ea;color:#61768b}#diagram .search-hit{fill:#a64c00!important;stroke:#ffcc65;stroke-width:1px;paint-order:stroke fill}#diagram .picked{filter:drop-shadow(0 0 5px #e2a321);outline:2px solid #df9f1d;outline-offset:3px}#diagram g.node,#diagram rect.entityBox{cursor:pointer}@media(max-width:760px){header{padding:14px 16px}header h1{font-size:19px}.header-links{display:none}nav{padding:8px;gap:5px}#select{flex-basis:100%;max-width:none;min-width:0}button,select,input{font-size:12px;padding:8px}#viewport{padding:10px}#workspace{flex-direction:column}#sourcePanel{width:100%;height:35%;min-height:120px}#hint{display:none}footer{font-size:11px;gap:8px}#details{padding:8px}}
+</style>
+</head>
+<body>
+<header id="header"><div><div class="eyebrow">DEVHARBOR / ENGINEERING ATLAS</div><h1>架构与流程图集</h1><p><span id="diagramCount"></span> 张详细图 · 原生 SVG / PNG / Mermaid · 依据当前代码</p></div><div class="header-links"><a href="README.md">图集说明</a><a href="../README.md">文档导航</a><a href="../../README.md">项目首页</a></div></header>
+<nav aria-label="图表阅读工具"><select id="select" aria-label="选择图表"></select><button id="prev" title="上一张">←</button><button id="next" title="下一张">→</button><button id="fitWidth">适宽</button><button id="fitAll">全图</button><button id="minus" aria-label="缩小">−</button><span id="scaleLabel"></span><button id="plus" aria-label="放大">＋</button><button id="actual">100%</button><button id="toggleTools" aria-expanded="false">展开工具</button></nav>
+<div id="details" class="hidden"><input id="search" placeholder="搜索模块、状态或字段" aria-label="搜索图中文字"><button id="searchNext">下一个</button><span id="searchCount" aria-live="polite"></span><button id="clear">取消高亮</button><button id="toggleSource" aria-expanded="false">查看 Mermaid</button><a id="svgLink" class="link" target="_blank" rel="noopener">SVG 整图</a><a id="pngLink" class="link" target="_blank" rel="noopener">PNG</a><a id="sourceLink" class="link" target="_blank" rel="noopener">源文件</a><span id="hint">点击节点定位 · Esc 取消高亮 · Ctrl / ⌘ + 滚轮缩放</span></div>
+<main id="workspace"><div id="viewport" tabindex="0" aria-label="图表滚动区域"><div id="stage"><div id="diagram"></div></div></div><pre id="sourcePanel" class="hidden" aria-label="Mermaid 源码"></pre></main>
+<footer><span id="caption"></span><span>图示解释代码机制，不代表真实模型效果或部署验证</span></footer>
+<script id="atlas-data" type="application/json">__DIAGRAM_DATA__</script>
+<script>
+'use strict';
+const data=JSON.parse(document.getElementById('atlas-data').textContent);
+const el=id=>document.getElementById(id);
+el('diagramCount').textContent=data.length;
+const select=el('select'),viewport=el('viewport'),stage=el('stage'),diagram=el('diagram');
+let index=0,scale=1,mode='width',hits=[],hitIndex=-1;
+data.forEach((item,i)=>{const option=document.createElement('option');option.value=i;option.textContent=item.number+' · '+item.title;select.append(option)});
+function resize(next,keep=true){
+ const old=scale,cx=(viewport.scrollLeft+viewport.clientWidth/2)/old,cy=(viewport.scrollTop+viewport.clientHeight/2)/old;
+ scale=Math.max(.03,Math.min(3,next));const item=data[index];
+ stage.style.width=item.width*scale+'px';stage.style.height=item.height*scale+'px';diagram.style.width=item.width+'px';diagram.style.height=item.height+'px';diagram.style.transform='scale('+scale+')';el('scaleLabel').textContent=Math.round(scale*100)+'%';
+ if(keep){viewport.scrollLeft=cx*scale-viewport.clientWidth/2;viewport.scrollTop=cy*scale-viewport.clientHeight/2}
+}
+function fit(kind){mode=kind;const item=data[index],w=(viewport.clientWidth-48)/item.width,h=(viewport.clientHeight-48)/item.height;resize(kind==='all'?Math.min(w,h):w,false);viewport.scrollTop=0;viewport.scrollLeft=0}
+function clear(){diagram.querySelectorAll('.picked,.search-hit').forEach(x=>x.classList.remove('picked','search-hit'));hits=[];hitIndex=-1;el('searchCount').textContent=''}
+function search(){clear();const q=el('search').value.trim().toLocaleLowerCase();if(!q)return;hits=[...diagram.querySelectorAll('text')].filter(x=>x.textContent.toLocaleLowerCase().includes(q));hits.forEach(x=>x.classList.add('search-hit'));el('searchCount').textContent=hits.length+' 处';nextHit()}
+function nextHit(){if(!hits.length)return;hitIndex=(hitIndex+1)%hits.length;hits[hitIndex].scrollIntoView({block:'center',inline:'center',behavior:'instant'});el('searchCount').textContent=(hitIndex+1)+' / '+hits.length}
+function show(i){index=(i+data.length)%data.length;select.value=index;const item=data[index];diagram.innerHTML=item.markup;el('sourcePanel').textContent=item.code;el('svgLink').href=item.svg;el('pngLink').href=item.png;el('sourceLink').href=item.source;el('caption').textContent=item.number+' / '+item.title;el('search').value='';clear();history.replaceState(null,'','#'+item.id);requestAnimationFrame(()=>fit('width'))}
+select.onchange=()=>show(Number(select.value));el('prev').onclick=()=>show(index-1);el('next').onclick=()=>show(index+1);el('fitWidth').onclick=()=>fit('width');el('fitAll').onclick=()=>fit('all');el('plus').onclick=()=>{mode='manual';resize(scale*1.25)};el('minus').onclick=()=>{mode='manual';resize(scale/1.25)};el('actual').onclick=()=>{mode='manual';resize(1)};
+el('toggleTools').onclick=()=>{const expanded=el('details').classList.toggle('hidden')===false;el('header').classList.toggle('hidden',!expanded);el('toggleTools').textContent=expanded?'收起工具':'展开工具';el('toggleTools').setAttribute('aria-expanded',String(expanded));try{localStorage.setItem('devharbor-atlas-tools',String(expanded))}catch{}if(mode!=='manual')requestAnimationFrame(()=>fit(mode))};
+el('toggleSource').onclick=()=>{const expanded=el('sourcePanel').classList.toggle('hidden')===false;el('toggleSource').setAttribute('aria-expanded',String(expanded));el('toggleSource').textContent=expanded?'收起 Mermaid':'查看 Mermaid';if(mode!=='manual')requestAnimationFrame(()=>fit(mode))};
+el('search').oninput=search;el('search').onkeydown=e=>{if(e.key==='Enter')nextHit()};el('searchNext').onclick=nextHit;el('clear').onclick=()=>{el('search').value='';clear()};
+diagram.onclick=e=>{const target=e.target.closest('g.node,g.er.entity,rect.entityBox,text');if(!target)return;diagram.querySelectorAll('.picked').forEach(x=>x.classList.remove('picked'));target.classList.add('picked')};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){clear();el('search').value=''}if(e.target.matches('input,select,textarea'))return;if(e.key==='ArrowRight')show(index+1);if(e.key==='ArrowLeft')show(index-1)});
+viewport.addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();mode='manual';resize(scale*(e.deltaY<0?1.12:1/1.12))}},{passive:false});
+window.addEventListener('resize',()=>{if(mode!=='manual')fit(mode)});
+window.addEventListener('hashchange',()=>{const i=data.findIndex(x=>x.id===decodeURIComponent(location.hash.slice(1)));if(i>=0&&i!==index)show(i)});
+el('header').classList.add('hidden');try{if(localStorage.getItem('devharbor-atlas-tools')==='true')el('toggleTools').click()}catch{}
+show(Math.max(0,data.findIndex(x=>x.id===decodeURIComponent(location.hash.slice(1)))));
+</script>
+</body></html>

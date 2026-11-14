@@ -1,0 +1,62 @@
+{
+  "name": "devharbor-frontend",
+  "version": "1.0.1",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.cjs",
+  "description": "DevHarbor 多智能体研发工作台",
+  "author": "DevHarbor",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "start": "vite preview --host 127.0.0.1",
+    "preview": "vite preview --host 127.0.0.1",
+    "lint": "eslint app components lib \"*.{ts,tsx}\"",
+    "test:sync": "node --test tests/repository-sync.test.mjs",
+    "test:desktop": "node --test tests/desktop-runtime.test.cjs",
+    "desktop:dev": "node scripts/desktop-dev.mjs",
+    "desktop": "npm run build && electron .",
+    "desktop:backend": "node scripts/build-backend.mjs",
+    "desktop:pack": "npm run build && npm run desktop:backend && electron-builder --dir",
+    "desktop:dist": "npm run build && npm run desktop:backend && electron-builder --win nsis"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.62.7",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.468.0",
+    "react": "19.0.9",
+    "react-dom": "19.0.9",
+    "react-router-dom": "7.18.5",
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@eslint/js": "9.39.5",
+    "@vitejs/plugin-react": "6.3.0",
+    "autoprefixer": "^10.4.20",
+    "electron": "45.2.3",
+    "electron-builder": "26.18.0",
+    "eslint": "9.39.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "postcss": "8.5.32",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "8.72.2",
+    "vite": "8.3.7"
+  },
+  "overrides": {
+    "postcss": "$postcss"
+  },
+  "build": {
+    "appId": "com.devharbor.desktop",
+    "productName": "DevHarbor",
+    "directories": { "output": "release" },
+    "files": ["dist/**/*", "electron/**/*.cjs", "package.json"],
+    "extraResources": [{ "from": "../backend/dist/devharbor-core", "to": "backend" }],
+    "win": { "target": "nsis" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "deleteAppDataOnUninstall": false }
+  }
+}

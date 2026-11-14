@@ -1,0 +1,219 @@
+%% 仓库快照、Agent 配置、工程执行与审计字段
+%% Source: backend/app/db/models.py; SQLAlchemy metadata, not a live database inspection.
+%% PK=primary key; FK=declared ForeignKey; UK=single-column unique; IDX=index; NULL=nullable.
+%% Mermaid .. means non-identifying relationship. FK/LOGICAL labels distinguish constraints, not line style.
+%% workflow_runs 是 GitHub CI 快照；agent_workflow_runs 是本地工程编排运行，两者不同。
+%% analysis_results、action_drafts、audit_logs 的目标采用类型加 ID，未声明目标表 FK。
+%% JSON 任务依赖、工具事件、输入输出是文档字段，不是独立关系表。
+%% 只列模型声明的 ondelete；ORM delete-orphan 和路由显式清理由代码另行控制。
+erDiagram
+    %% 方向由渲染器 er.layoutDirection 配置；旧版 ER 解析器不接受 direction 指令。
+    accTitle: DevHarbor 仓库快照、Agent 配置、工程执行与审计字段
+    accDescr: 以当前模型声明为准。NOT NULL 与 NULL 表示可空性。FK 为声明外键，LOGICAL 为应用层关联；桥接实体只展示主键。
+    agent_settings {
+        VARCHAR(100) agent_id PK "NOT NULL"
+        BOOLEAN enabled "NOT NULL"
+        TIMESTAMP updated_at "NOT NULL; tz"
+    }
+    model_providers {
+        UUID id PK "NOT NULL"
+        VARCHAR(120) name "NOT NULL"
+        TEXT base_url "NOT NULL"
+        VARCHAR(40) protocol "NOT NULL"
+        TEXT api_key_encrypted "NULL"
+        JSON models "NOT NULL"
+        VARCHAR(300) default_model "NOT NULL"
+        TIMESTAMP created_at "NOT NULL; tz"
+        TIMESTAMP updated_at "NOT NULL; tz"
+    }
+    model_provider_selection {
+        INTEGER id PK "NOT NULL"
+        UUID provider_id FK "NULL; to model_providers.id; ON DELETE SET NULL"
+        VARCHAR(300) model "NULL"
+    }
+    repositories {
+        UUID id PK "NOT NULL"
+        VARCHAR(200) owner "NOT NULL; IDX"
+        VARCHAR(200) name "NOT NULL; IDX"
+        VARCHAR(400) full_name UK "NOT NULL; IDX"
+        VARCHAR(80) provider "NOT NULL"
+        TEXT api_base_url "NULL"
+        TEXT clone_url "NULL"
+        TEXT local_path "NULL"
+        VARCHAR(80) checkout_mode "NOT NULL"
+        TEXT github_token_encrypted "NULL"
+        TEXT description "NULL"
+        VARCHAR(200) default_branch "NULL"
+        BIGINT github_id "NULL"
+        TIMESTAMP last_sync_at "NULL; tz"
+        TIMESTAMP created_at "NOT NULL; tz"
+        TIMESTAMP updated_at "NOT NULL; tz"
+    }
+    issues {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        BIGINT github_issue_id "NULL"
+        INTEGER number "NOT NULL; IDX"
+        VARCHAR(500) title "NOT NULL"
+        TEXT body "NULL"
+        VARCHAR(50) state "NOT NULL"
+        JSON labels "NOT NULL"
+        VARCHAR(200) author "NULL"
+        JSON assignees "NOT NULL"
+        TIMESTAMP created_at "NULL; tz"
+        TIMESTAMP updated_at "NULL; tz"
+        TIMESTAMP closed_at "NULL; tz"
+    }
+    pull_requests {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        BIGINT github_pr_id "NULL"
+        INTEGER number "NOT NULL; IDX"
+        VARCHAR(500) title "NOT NULL"
+        TEXT body "NULL"
+        VARCHAR(50) state "NOT NULL"
+        VARCHAR(200) author "NULL"
+        VARCHAR(200) base_branch "NULL"
+        VARCHAR(200) head_branch "NULL"
+        TIMESTAMP merged_at "NULL; tz"
+        TIMESTAMP created_at "NULL; tz"
+        TIMESTAMP updated_at "NULL; tz"
+    }
+    pr_files {
+        UUID id PK "NOT NULL"
+        UUID pr_id FK "NOT NULL; IDX; to pull_requests.id"
+        VARCHAR(500) filename "NOT NULL"
+        VARCHAR(50) status "NOT NULL"
+        INTEGER additions "NOT NULL"
+        INTEGER deletions "NOT NULL"
+        TEXT patch "NULL"
+    }
+    pr_review_comments {
+        UUID id PK "NOT NULL"
+        UUID pr_id FK "NOT NULL; IDX; to pull_requests.id"
+        BIGINT github_comment_id "NULL"
+        TEXT body "NULL"
+        VARCHAR(500) path "NULL"
+        INTEGER line "NULL"
+        VARCHAR(200) author "NULL"
+        TIMESTAMP created_at "NULL; tz"
+        TIMESTAMP updated_at "NULL; tz"
+    }
+    workflow_runs {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        BIGINT github_run_id "NULL"
+        VARCHAR(300) name "NOT NULL"
+        VARCHAR(80) status "NOT NULL"
+        VARCHAR(80) conclusion "NULL"
+        TEXT html_url "NULL"
+        JSON jobs "NOT NULL"
+        TEXT logs_text "NULL"
+        TIMESTAMP created_at "NULL; tz"
+        TIMESTAMP updated_at "NULL; tz"
+    }
+    analysis_results {
+        UUID id PK "NOT NULL"
+        VARCHAR(80) target_type "NOT NULL; IDX"
+        UUID target_id "NOT NULL; IDX; LOGICAL target_type discriminator"
+        VARCHAR(100) analysis_type "NOT NULL; IDX"
+        JSON input_snapshot "NOT NULL"
+        JSON result_json "NOT NULL"
+        VARCHAR(200) model_name "NULL"
+        TIMESTAMP created_at "NOT NULL; tz"
+    }
+    agent_runs {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NULL; to repositories.id"
+        UUID conversation_id FK "NULL; IDX; to conversations.id"
+        TEXT user_message "NOT NULL"
+        VARCHAR(100) route "NOT NULL"
+        JSON tool_calls "NOT NULL"
+        TEXT final_answer "NOT NULL"
+        VARCHAR(80) status "NOT NULL"
+        TIMESTAMP created_at "NOT NULL; tz"
+    }
+    agent_workflow_runs {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NULL; IDX; to repositories.id"
+        UUID conversation_id FK "NULL; IDX; to conversations.id"
+        TEXT goal "NOT NULL"
+        JSON spec_json "NOT NULL"
+        JSON observation_json "NOT NULL"
+        TEXT final_answer "NOT NULL"
+        JSON metrics "NOT NULL"
+        VARCHAR(80) status "NOT NULL; IDX"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+        TIMESTAMP completed_at "NULL; tz"
+    }
+    agent_task_runs {
+        UUID id PK "NOT NULL"
+        UUID workflow_id FK "NOT NULL; IDX; to agent_workflow_runs.id"
+        VARCHAR(120) task_id "NOT NULL; IDX"
+        VARCHAR(120) agent_name "NOT NULL; IDX"
+        VARCHAR(120) task_type "NOT NULL; IDX"
+        JSON claim_json "NOT NULL"
+        JSON input_json "NOT NULL"
+        JSON result_json "NOT NULL"
+        VARCHAR(80) status "NOT NULL; IDX"
+        TEXT error "NULL"
+        TIMESTAMP started_at "NULL; tz"
+        TIMESTAMP completed_at "NULL; tz"
+    }
+    action_drafts {
+        UUID id PK "NOT NULL"
+        UUID repo_id FK "NOT NULL; IDX; to repositories.id"
+        VARCHAR(100) draft_type "NOT NULL; IDX"
+        VARCHAR(100) target_type "NOT NULL; IDX"
+        UUID target_id "NULL; IDX; LOGICAL target_type discriminator"
+        VARCHAR(300) title "NOT NULL"
+        TEXT content "NOT NULL"
+        VARCHAR(80) risk_level "NOT NULL; IDX"
+        VARCHAR(80) status "NOT NULL; IDX"
+        UUID created_by FK "NULL; IDX; to users.id"
+        UUID confirmed_by FK "NULL; IDX; to users.id"
+        TIMESTAMP executed_at "NULL; tz"
+        JSON execution_result "NULL"
+        TEXT error_message "NULL"
+        JSON metadata "NOT NULL; Python attr meta"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+        TIMESTAMP updated_at "NOT NULL; tz"
+    }
+    audit_logs {
+        UUID id PK "NOT NULL"
+        UUID user_id FK "NULL; IDX; to users.id"
+        UUID repo_id FK "NULL; IDX; to repositories.id"
+        VARCHAR(160) action "NOT NULL; IDX"
+        VARCHAR(100) target_type "NULL; IDX"
+        VARCHAR(120) target_id "NULL; IDX; LOGICAL target_type discriminator"
+        VARCHAR(80) status "NOT NULL; IDX"
+        JSON request_json "NOT NULL"
+        JSON result_json "NOT NULL"
+        TIMESTAMP created_at "NOT NULL; IDX; tz"
+    }
+    users {
+        UUID id PK "bridge; full fields in other detail"
+    }
+    conversations {
+        UUID id PK "bridge; full fields in other detail"
+    }
+
+    model_providers |o..o{ model_provider_selection : "FK provider_id"
+    repositories ||..o{ issues : "FK repo_id"
+    repositories ||..o{ pull_requests : "FK repo_id"
+    pull_requests ||..o{ pr_files : "FK pr_id"
+    pull_requests ||..o{ pr_review_comments : "FK pr_id"
+    repositories ||..o{ workflow_runs : "FK repo_id"
+    repositories |o..o{ agent_runs : "FK repo_id"
+    conversations |o..o{ agent_runs : "FK conversation_id"
+    repositories |o..o{ agent_workflow_runs : "FK repo_id"
+    conversations |o..o{ agent_workflow_runs : "FK conversation_id"
+    agent_workflow_runs ||..o{ agent_task_runs : "FK workflow_id"
+    repositories ||..o{ action_drafts : "FK repo_id"
+    users |o..o{ action_drafts : "FK created_by"
+    users |o..o{ action_drafts : "FK confirmed_by"
+    users |o..o{ audit_logs : "FK user_id"
+    repositories |o..o{ audit_logs : "FK repo_id"
+    issues |o..o{ analysis_results : "LOGICAL target_id when issue"
+    pull_requests |o..o{ analysis_results : "LOGICAL target_id when pull_request"
+    workflow_runs |o..o{ analysis_results : "LOGICAL target_id when workflow_run"

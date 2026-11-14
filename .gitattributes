@@ -1,0 +1,11 @@
+* text=auto
+* whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Keep existing tracked line endings; use LF for new generated diagram sources.
+scripts/documentation-tools/diagrams/** text eol=lf
+docs/diagrams/** text eol=lf
+docs/diagrams/png/** binary
+*.ps1 text eol=crlf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary

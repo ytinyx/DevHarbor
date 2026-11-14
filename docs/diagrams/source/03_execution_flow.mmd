@@ -1,0 +1,85 @@
+%% 依据：backend/app/api/routes/chat.py::_conversation_sse / _conversation_plan / _conversation_plan_execute_sse、services/agents/chat_agent.py、workflow_orchestrator.py。
+flowchart TB
+  START(["用户提交消息与仓库 / 会话 ID"])
+  MODE{"工作台选择<br/>直接问答或协作计划？"}
+  PREVIEW["POST /api/chat/plan<br/>规则 Planner 生成 WorkflowSpec"]
+  CONFIRM{"查看任务分工<br/>点击确认执行？"}
+  EXECUTE["POST /api/chat/plan/execute/stream<br/>提交任务规格"]
+  PREP["chat.py<br/>校验仓库 · 确保会话 · 压缩预检"]
+  SAVE["写入用户消息<br/>重建 EvidenceStore · 提交事务"]
+  ASSEMBLE["ContextAssembler<br/>历史 + 记忆 + 相关证据 + 预算"]
+  PATH{"执行已确认计划？"}
+  VALIDATE["校验 WorkflowSpec<br/>构建本次任务执行器"]
+  SKILL["激活 Skill · 构建工具 schema<br/>记录激活原因与资源摘要"]
+  SPECIAL{"命中历史 / 记忆 /<br/>项目概览专用分支？"}
+  PREFETCH["读取近期历史或预取指定工具<br/>基于已有观察组织回答"]
+  MODELREADY{"已配置聊天模型？"}
+  LOCAL["使用预取证据回答<br/>无证据则 blocked"]
+  MODEL["model_decision<br/>预算内组装提示 · 调用工具模型"]
+  TOOLQ{"模型返回工具调用？"}
+  GUARD{"相同工具 + 参数<br/>调用次数超过 2？"}
+  BLOCK["停止本轮<br/>Skill 激活失败 / 重复调用<br/>completion = blocked"]
+  TOOL["tool_action<br/>依次取出本批工具 · 参数校验 · 执行"]
+  TYPE{"工具类别"}
+  READ["读文件 / 搜索 / 记忆 / RAG<br/>保留来源、引用和错误"]
+  ANALYSIS["Issue / PR / CI / Report<br/>结构化分析"]
+  SAFETY["风险检查 → ActionDraft<br/>等待独立确认接口；此处不写 GitHub"]
+  PLAN["工程审查工具<br/>Planner 生成 WorkflowSpec"]
+  READY["解析尚未完成的任务依赖<br/>失败依赖 → skipped 并移出队列"]
+  PENDING{"仍有待执行任务？"}
+  SCHED{"存在依赖均成功的<br/>就绪任务？"}
+  GRAPHERR["剩余任务 → error<br/>循环或缺失依赖"]
+  BATCH["就绪任务按 max_parallel_tasks 并发<br/>单任务超时与异常转为结果"]
+  OBSERVE["Observer<br/>检查失败、证据不足与低置信度"]
+  REPLAN{"允许且仍有预算<br/>需要重规划？"}
+  NEWPLAN["Planner.replan<br/>图未变化则结束；复用成功任务结果"]
+  SYNTH["Synthesis<br/>汇总任务、引用、发现与建议"]
+  WFSAVE["保存 AgentWorkflowRun / AgentTaskRun"]
+  WFPATH{"从 ChatAgent<br/>工具触发？"}
+  RESULT["tool_result / action / observation<br/>记录工具轨迹与引用"]
+  MORE{"本批还有待执行工具？"}
+  LIMIT{"模型决策已达 12 步？"}
+  BUDGET["停止循环<br/>completion = budget_exhausted"]
+  ANSWER["最终答案 / 必要时降级回答<br/>校验 Skill 输出契约 · 生成 completion"]
+  ARCHIVE["保存助手消息与 AgentRun<br/>SessionSealer 封存 transcript / 记忆候选"]
+  COMMIT["提交事务<br/>返回 final SSE 与 run_id / message_id"]
+  FAIL["捕获循环异常 · 回滚未提交更改<br/>保存错误回答与 error AgentRun"]
+  END(["前端展示答案、引用、轨迹与状态"])
+  START --> MODE
+  MODE -->|直接问答| PREP
+  MODE -->|协作计划| PREVIEW --> CONFIRM
+  CONFIRM -->|是| EXECUTE --> PREP
+  PREP --> SAVE --> ASSEMBLE --> PATH
+  PATH -->|是| VALIDATE --> READY
+  PATH -->|直接问答| SKILL --> SPECIAL
+  SKILL -. 激活失败 .-> BLOCK
+  SPECIAL -->|是| PREFETCH --> ANSWER
+  SPECIAL -->|否| MODELREADY
+  MODELREADY -->|否| LOCAL --> ANSWER
+  MODELREADY -->|是| MODEL --> TOOLQ
+  TOOLQ -->|否| ANSWER
+  TOOLQ -->|是| GUARD
+  GUARD -->|是| BLOCK --> ANSWER
+  GUARD -->|否| TOOL --> TYPE
+  TYPE --> READ & ANALYSIS & SAFETY & PLAN
+  READ & ANALYSIS & SAFETY --> RESULT
+  PLAN --> READY --> PENDING
+  PENDING -->|否| OBSERVE
+  PENDING -->|是| SCHED
+  SCHED -->|是| BATCH --> READY
+  SCHED -->|否| GRAPHERR --> OBSERVE
+  OBSERVE --> REPLAN
+  REPLAN -->|是，默认最多 1 次 / 上限 2 次| NEWPLAN
+  NEWPLAN -->|任务图变化| READY
+  NEWPLAN -->|任务图相同| SYNTH
+  REPLAN -->|否| SYNTH
+  SYNTH --> WFSAVE --> WFPATH
+  WFPATH -->|是| RESULT
+  WFPATH -->|已确认计划| ARCHIVE
+  RESULT --> MORE
+  MORE -->|是| TOOL
+  MORE -->|否| LIMIT
+  LIMIT -->|否| MODEL
+  LIMIT -->|是| BUDGET --> ANSWER
+  MODEL -. 未恢复的异常 .-> FAIL --> ARCHIVE
+  ANSWER --> ARCHIVE --> COMMIT --> END

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="765" viewBox="0 0 1400 765" role="img" aria-labelledby="title desc">
+<title id="title">项目目录 · 从哪里开始找</title><desc id="desc">页面、后端、运行脚本和说明文档各有入口。</desc>
+<defs>
+ <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#087f8c" stroke-width="1.5"/></marker>
+ <marker id="muted-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#8aa2b6" stroke-width="1.5"/></marker>
+ <marker id="amber-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#aa6421" stroke-width="1.5"/></marker>
+ <linearGradient id="header" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#10243b"/><stop offset="1" stop-color="#173d54"/></linearGradient>
+</defs>
+<rect width="1400" height="765" fill="#f5f8fc"/>
+<rect width="1400" height="174" fill="url(#header)"/>
+<path d="M0 173 H1400" stroke="#35bec1" stroke-width="3"/>
+<g font-family="'Segoe UI','Microsoft YaHei','PingFang SC',Arial,sans-serif">
+<text x="64" y="43" font-size="13" font-weight="650" text-anchor="start" fill="#87d9dc" letter-spacing="2">DEVHARBOR  /  ENGINEERING NOTES</text>
+<text x="64" y="93" font-size="32" font-weight="700" text-anchor="start" fill="#ffffff">项目目录 · 从哪里开始找</text>
+<text x="64" y="133" font-size="17" font-weight="400" text-anchor="start" fill="#c4d9e6">页面、后端、运行脚本和说明文档各有入口。</text>
+<rect x="548" y="207" width="304" height="62" rx="14" fill="#10243b" stroke="#10243b"/>
+<text x="700" y="247" font-size="27" font-weight="700" text-anchor="middle" fill="#ffffff">DevHarbor/</text>
+<path d="M700 269 V304 M214 304 H1186 M214 304 V336 M538 304 V336 M862 304 V336 M1186 304 V336" fill="none" stroke="#aac0ce" stroke-width="2"/>
+<rect x="64" y="336" width="300" height="285" rx="16" fill="#ffffff" stroke="#d2e0ea"/>
+<rect x="86" y="360" width="4" height="50" rx="2" fill="#4267b2" stroke="#4267b2"/>
+<text x="104" y="381" font-size="25" font-weight="700" text-anchor="start" fill="#17334c">frontend/</text>
+<text x="104" y="406" font-size="17" font-weight="650" text-anchor="start" fill="#4267b2">页面和桌面窗口</text>
+<path d="M87 426 H341" stroke="#e4ecf2"/>
+<text x="88" y="455" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">app/</text>
+<text x="340" y="455" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">各个页面</text>
+<text x="88" y="489" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">components/</text>
+<text x="340" y="489" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">复用组件</text>
+<text x="88" y="523" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">lib/</text>
+<text x="340" y="523" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">请求与工具</text>
+<text x="88" y="557" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">electron/</text>
+<text x="340" y="557" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">桌面宿主与桥接</text>
+<text x="88" y="591" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">scripts/</text>
+<text x="340" y="591" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">桌面构建</text>
+<rect x="388" y="336" width="300" height="285" rx="16" fill="#ffffff" stroke="#d2e0ea"/>
+<rect x="410" y="360" width="4" height="50" rx="2" fill="#087f8c" stroke="#087f8c"/>
+<text x="428" y="381" font-size="25" font-weight="700" text-anchor="start" fill="#17334c">backend/</text>
+<text x="428" y="406" font-size="17" font-weight="650" text-anchor="start" fill="#087f8c">服务和智能体</text>
+<path d="M411 426 H665" stroke="#e4ecf2"/>
+<text x="412" y="455" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">app/api/</text>
+<text x="664" y="455" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">请求入口</text>
+<text x="412" y="489" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">app/services/</text>
+<text x="664" y="489" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">业务处理</text>
+<text x="412" y="523" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">app/db/</text>
+<text x="664" y="523" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">数据表</text>
+<text x="412" y="557" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">desktop.py</text>
+<text x="664" y="557" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">本机后端</text>
+<text x="412" y="591" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">desktop_database.py</text>
+<text x="664" y="591" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">桌面数据库</text>
+<rect x="712" y="336" width="300" height="285" rx="16" fill="#ffffff" stroke="#d2e0ea"/>
+<rect x="734" y="360" width="4" height="50" rx="2" fill="#aa6421" stroke="#aa6421"/>
+<text x="752" y="381" font-size="25" font-weight="700" text-anchor="start" fill="#17334c">scripts/</text>
+<text x="752" y="406" font-size="17" font-weight="650" text-anchor="start" fill="#aa6421">运行脚本与文档工具</text>
+<path d="M735 426 H989" stroke="#e4ecf2"/>
+<text x="736" y="455" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">start_rag.ps1</text>
+<text x="988" y="455" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">启动演示</text>
+<text x="736" y="489" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">seed_demo_data.py</text>
+<text x="988" y="489" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">示例数据</text>
+<text x="736" y="523" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">check_github_access.py</text>
+<text x="988" y="523" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">GitHub 检查</text>
+<text x="736" y="557" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">init_pgvector.sql</text>
+<text x="988" y="557" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">向量扩展</text>
+<text x="736" y="591" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">documentation-tools/</text>
+<text x="988" y="591" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">文档维护</text>
+<rect x="1036" y="336" width="300" height="285" rx="16" fill="#ffffff" stroke="#d2e0ea"/>
+<rect x="1058" y="360" width="4" height="50" rx="2" fill="#4267b2" stroke="#4267b2"/>
+<text x="1076" y="381" font-size="25" font-weight="700" text-anchor="start" fill="#17334c">docs/</text>
+<text x="1076" y="406" font-size="17" font-weight="650" text-anchor="start" fill="#4267b2">说明文档与图表</text>
+<path d="M1059 426 H1313" stroke="#e4ecf2"/>
+<text x="1060" y="455" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">guides/</text>
+<text x="1312" y="455" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">安装与使用</text>
+<text x="1060" y="489" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">api/</text>
+<text x="1312" y="489" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">接口导航</text>
+<text x="1060" y="523" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">architecture/</text>
+<text x="1312" y="523" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">系统设计</text>
+<text x="1060" y="557" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">examples/</text>
+<text x="1312" y="557" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">示例资料</text>
+<text x="1060" y="591" font-size="17" font-weight="600" text-anchor="start" fill="#17334c">diagrams/</text>
+<text x="1312" y="591" font-size="15" font-weight="400" text-anchor="end" fill="#5c7185">图集与图源</text>
+<rect x="64" y="652" width="1272" height="68" rx="12" fill="#edf4f8" stroke="#d2e0ea"/>
+<text x="89" y="693" font-size="17" font-weight="700" text-anchor="start" fill="#17334c">本地生成</text>
+<text x="252" y="693" font-size="17" font-weight="400" text-anchor="start" fill="#5c7185">node_modules / .venv：依赖</text>
+<text x="548" y="693" font-size="17" font-weight="400" text-anchor="start" fill="#5c7185">dist / release：构建产物</text>
+<text x="815" y="693" font-size="17" font-weight="400" text-anchor="start" fill="#5c7185">.data：Web 演示数据  ·  Electron userData：桌面数据</text>
+</g></svg>

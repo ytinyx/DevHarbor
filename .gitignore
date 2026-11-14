@@ -1,0 +1,62 @@
+# Local environment
+.env
+.env.*
+!.env.example
+.mcp.json
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+/backend/.pytest_tmp*/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+
+# Frontend and desktop builds
+node_modules/
+frontend/.next/
+frontend/.next-dev/
+frontend/out/
+frontend/dist/
+frontend/release/
+backend/build/
+backend/dist/
+frontend/tsconfig.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local runtime data (checkouts, uploads, logs, and tool scratch files)
+tmp/
+.codex_tmp/
+.data/
+*.log
+.devharbor-pr-snapshot.json
+
+# Keep project indexing policy shareable; ignore other local project state.
+**/.devharbor/*
+!**/.devharbor/index.yml
+
+# SQLite databases and their rollback / WAL sidecars
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-shm
+*.sqlite3-wal
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

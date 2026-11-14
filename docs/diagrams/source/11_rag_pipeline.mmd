@@ -1,0 +1,67 @@
+%% 依据：backend/app/api/routes/rag.py、services/rag/document_processing.py、chunking.py、vector_store.py、pgvector_store.py、retrieval.py、knowledge_base.py、answer_gate.py、qa.py；ChatAgent 对照 api/routes/chat.py::_semantic_search。
+flowchart TB
+  subgraph INGEST["A / RAG 工作室文档入库"]
+    UPLOAD["POST /api/rag/repositories/{repo_id}/documents<br/>校验文件类型、非空与 12 MB 上限"]
+    HASH{"同仓库 SHA256<br/>已有非 failed 文档？"}
+    DUP["返回已有 KnowledgeSourceDocument"]
+    STORE["保存上传文件与源文档记录<br/>queued · 返回 202"]
+    PARSE["BackgroundTasks / process_knowledge_document<br/>parsing：按格式提取文本"]
+    SPLIT["splitting：结构感知切片<br/>父子块 · 章节/页码 · 来源元数据"]
+    SEMANTIC{"Embedding 已启用？"}
+    EMBED["embedding：每批最多 64 段<br/>固定 provider / model / dimensions"]
+    INDEX["indexing：准备文本片段<br/>供 BM25 使用"]
+    DOCS[("Document<br/>正文 · source_id · repo_id · 块与向量配置元数据")]
+    ENABLED{"向量写入已启用？"}
+    VECTOR[("Milvus 或 pgvector<br/>写入所选向量后端")]
+    DONE["KnowledgeSourceDocument = completed<br/>记录片段数和完成时间"]
+    FAIL["failed + error_message<br/>回滚未提交 SQL；可由 retry 接口重排队"]
+    UPLOAD --> HASH
+    HASH -->|是| DUP
+    HASH -->|否| STORE --> PARSE --> SPLIT --> SEMANTIC
+    SEMANTIC -->|是| EMBED --> DOCS
+    SEMANTIC -->|否| INDEX --> DOCS
+    DOCS --> ENABLED
+    ENABLED -->|是| VECTOR --> DONE
+    ENABLED -->|否，跳过向量写入| DONE
+    PARSE & SPLIT & EMBED & VECTOR -. 异常 .-> FAIL
+  end
+  subgraph RETRIEVE["B / 完整问答：qa.answer_question → knowledge_base.retrieve_knowledge"]
+    QUERY["问题 + repo_id + source_types + metadata_filters<br/>读取知识库配置；关闭 Embedding 时使用 fulltext"]
+    METHOD{"retrieval_method"}
+    QE["Query Embedding<br/>与入库使用同一向量配置"]
+    VEC["Milvus / pgvector 向量召回<br/>按仓库、来源类型和元数据过滤"]
+    BM25["SQL 文档候选 + BM25<br/>同一检索范围"]
+    VFAIL["向量存储不可用<br/>hybrid：继续 BM25<br/>vector：API 返回 503"]
+    FUSION["混合时加权融合<br/>vector + keyword + 双命中奖励<br/>单路模式仅保留对应候选"]
+    DEDUP["文本指纹 / 近重复去重<br/>同父块占位限额"]
+    RERANK["候选重排（可关闭）<br/>Qwen API 或本地 heuristic<br/>远端失败记录 fallback 并用 heuristic"]
+    TOP["选取 Top-K（1～20）"]
+    PARENT["同父块、同版本邻块扩展<br/>neighbor_window = 1"]
+    THRESHOLD["按配置进行分数阈值过滤"]
+    COMPRESS["压缩上下文<br/>每项 260 token；总预算 520～1800"]
+    GATE{"Answer Gate<br/>证据数量 / 分数 / 关键名称<br/>冲突词规则 / 对象范围"}
+    REFUSE["insufficient_evidence<br/>明确资料不足"]
+    CONFLICT["conflict<br/>提示核查来源或版本"]
+    CLARIFY["ask_clarification<br/>请求文件、模块或版本范围"]
+    GENERATE["answer<br/>可用且启用 LLM 时生成<br/>未启用或空答案则本地摘录"]
+    RESULT["返回答案、编号来源、generation_mode<br/>answer_gate + retrieval_config + pipeline trace"]
+    QUERY --> METHOD
+    METHOD -->|vector / hybrid| QE --> VEC --> FUSION
+    METHOD -->|fulltext / hybrid| BM25 --> FUSION
+    VEC -. 不可用 .-> VFAIL
+    VFAIL -. hybrid 降级 .-> FUSION
+    FUSION --> DEDUP --> RERANK --> TOP --> PARENT --> THRESHOLD --> COMPRESS --> GATE
+    GATE --> REFUSE & CONFLICT & CLARIFY & GENERATE
+    REFUSE & CONFLICT & CLARIFY & GENERATE --> RESULT
+  end
+  DOCS -. 关键词候选 .-> BM25
+  VECTOR -. 向量候选 .-> VEC
+  subgraph LIGHT["C / ChatAgent 的轻量检索工具（另一条调用路径）"]
+    CHAT["ChatAgent<br/>rag.search_similar_documents 工具"]
+    SEARCH["chat.py::_semantic_search<br/>直接调用 search_similar_documents"]
+    BASE["混合召回或 BM25 → 去重 / 同父限额<br/>启发式重排 → 片段压缩"]
+    OBS["返回证据摘要与引用<br/>记录 RecallEvent · 交回 ChatAgent 决策"]
+    CHAT --> SEARCH --> BASE --> OBS
+  end
+  BOUNDARY["存储与检索边界<br/>文档 completed 表示入库处理结束；向量可用性单独检查。<br/>pgvector 与文档共用 SQL 事务；Milvus 写入独立。<br/>切换向量后端或 Embedding 模型后需重建索引。"]
+  DONE & GATE & SEARCH -.-> BOUNDARY

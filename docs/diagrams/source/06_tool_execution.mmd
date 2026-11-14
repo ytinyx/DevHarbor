@@ -1,0 +1,50 @@
+%% 依据：backend/app/services/agents/chat_agent.py::_complete_tool_call / _invoke_tool_with_recovery；api/routes/chat.py::_build_conversation_tools；api/routes/action_drafts.py；services/permissions.py。
+flowchart TB
+  CALL["模型 tool_calls<br/>工具名 · 参数 · call ID"]
+  NORMAL["映射公开工具名<br/>补齐服务器控制的 repo / conversation"]
+  SKILL{"符合显式 Skill<br/>工具范围约束？"}
+  KNOWN{"工具是否注册？"}
+  ERROR["生成结构化 tool_error<br/>记录错误分类与调用 ID"]
+  SCHEMA["LangChain StructuredTool<br/>Pydantic 参数校验"]
+  INVOKE["调用实际工具函数<br/>按仓库与会话作用域执行"]
+  KIND{"工具路径"}
+  FILE["workspace 工具<br/>解析与约束路径 · 跳过敏感文件<br/>读取 / 搜索当前 checkout"]
+  MEMORY["记忆工具 → Stdio MCP<br/>搜索证据 / 读取历史与封存会话"]
+  ANALYZE["RAG / 工程分析工具<br/>检索、Issue / PR / CI、工作流"]
+  SAFETY["Chat 安全工具<br/>按写意图组装草稿<br/>调用 SafetyAgent 返回风险评级"]
+  DRAFT["保存 ActionDraft<br/>pending_confirmation + 草稿内容"]
+  OBS["工具观察<br/>摘要 · 引用 · 状态 · attempts"]
+  FEEDBACK["发出 tool_result / observation<br/>下一轮模型可读取结果"]
+  USER["用户在草稿页审阅内容"]
+  CHOICE{"确认或取消？"}
+  CANCEL["POST cancel<br/>校验权限与 pending_confirmation<br/>通过后 → cancelled"]
+  CHECK["POST confirm<br/>require_permission + 状态检查"]
+  REJECT["HTTP 400 / 403 / 404<br/>状态不符 / 无权限 / 目标不存在<br/>不执行外部请求"]
+  EXEC["执行草稿类型<br/>评论 · 创建/关闭 Issue · 添加标签"]
+  GH["GitHubClient<br/>向配置仓库发出真实写请求"]
+  SUCCESS["executed<br/>保存执行结果、确认人、时间"]
+  FAILED["failed<br/>保存 error_message"]
+  AUDIT[("AuditLog<br/>请求摘要 · 结果 · success / failed")]
+  REPORT["send_report 特例<br/>仅本地标记；未接入外部消息渠道"]
+  BOUNDARY["权限与执行边界<br/>桌面 API 校验本次启动令牌，草稿权限检查使用本机角色。<br/>确认接口按请求执行，DEMO_MODE 下也可能发出真实写入。"]
+  CALL --> NORMAL --> SKILL
+  SKILL -->|是| KNOWN
+  SKILL -->|否，permission_denied| ERROR
+  KNOWN -->|否| ERROR --> OBS
+  KNOWN -->|是| SCHEMA --> INVOKE --> KIND
+  SCHEMA -. 参数异常 .-> ERROR
+  KIND --> FILE & MEMORY & ANALYZE & SAFETY
+  FILE & MEMORY & ANALYZE --> OBS
+  SAFETY --> DRAFT --> OBS --> FEEDBACK
+  DRAFT --> USER --> CHOICE
+  CHOICE -->|取消| CANCEL --> AUDIT
+  CHOICE -->|确认| CHECK
+  CHECK -->|检查通过| EXEC
+  CHECK -. 检查失败 .-> REJECT
+  CANCEL -. 检查失败 .-> REJECT
+  EXEC --> GH
+  EXEC -->|send_report| REPORT --> SUCCESS
+  GH -->|成功| SUCCESS --> AUDIT
+  GH -->|异常| FAILED --> AUDIT
+  EXEC -. 类型不支持 / 缺参数 .-> FAILED
+  CHECK -.-> BOUNDARY

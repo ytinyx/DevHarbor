@@ -1,0 +1,56 @@
+%% 依据：backend/app/services/agents/chat_agent.py、workflow_orchestrator.py、services/chat_memory.py、api/routes/action_drafts.py、services/rag/retrieval.py、frontend/electron/main.cjs、backend/desktop.py。
+flowchart TB
+  FAILURE["执行中出现异常或无法继续"]
+  WHERE{"失败发生在哪一层？"}
+  TOOL["工具调用异常<br/>分类为 timeout / rate_limited / transient_network<br/>或权限、缺数据、无效输出、运行时错误"]
+  RETRY{"瞬时错误且工具<br/>允许重试？"}
+  ONCE["最多重试 1 次<br/>记录 tool_retry 与 attempts"]
+  TERR["tool_error 回填模型<br/>不把失败当成检索命中"]
+  CONTEXT["模型报上下文溢出"]
+  FIRST{"本轮尚未执行<br/>溢出恢复？"}
+  COMPRESS["更激进的运行时上下文投影<br/>仅重试该模型调用 1 次"]
+  RAISE["异常继续上抛<br/>路由回滚未提交事务"]
+  CHATERR["保存错误回答与 error AgentRun<br/>封存会话后返回 final / route=error"]
+  WF["工程任务超时 / 异常<br/>WorkflowTaskResult = error"]
+  DEP["依赖失败的后续任务 skipped<br/>依赖循环或缺失 → error"]
+  OBS["Observer 检查错误与证据缺口"]
+  REPLAN{"允许重规划且<br/>次数未耗尽？"}
+  PLAN["Planner 增补任务<br/>复用成功结果；图不变则停止"]
+  RERUN["执行新增 / 未成功任务<br/>再次收集结果与错误"]
+  FINAL["综合已有结果与失败信息<br/>保存工作流和任务记录"]
+  SEAL["记忆提取 / 写入失败"]
+  FALLBACK["回退摘要或局部事务回滚<br/>保留原始 ChatSession transcript"]
+  WARN["sealed_with_warnings<br/>错误写入 sealing.errors"]
+  WRITE["GitHub 写请求异常"]
+  WFAILED["草稿标记 failed + 审计<br/>不自动重试确认请求"]
+  VERIFY["运维/用户需核查远端结果<br/>当前没有自动副作用核实或幂等保证"]
+  STORAGE{"存储服务不可用"}
+  DESKTOP["桌面 PostgreSQL 启动失败<br/>Electron 用本机 SQLite 重启后端"]
+  VECTOR["所选向量后端不可用<br/>Milvus 或 pgvector"]
+  FALLBACK_BM25["hybrid：继续 BM25<br/>记录向量分支不可用"]
+  VECTOR_ERR["vector：传播不可用错误<br/>API 返回 503"]
+  RESTR["不可重试工具<br/>安全草稿 / 周报生成 / 工程工作流<br/>避免重复产生内部写入"]
+  LIMIT["恢复边界<br/>无 LangGraph 持久 checkpoint / interrupt-resume。<br/>SSE 断开、进程重启不代表任务可自动续跑；<br/>数据库历史供后续查询，不是执行断点。"]
+  FAILURE --> WHERE
+  WHERE -->|工具| TOOL --> RETRY
+  RETRY -->|是| ONCE
+  ONCE -->|仍失败| TERR
+  ONCE -->|成功| OK["继续模型工具循环"]
+  RETRY -->|否| TERR --> OK
+  RESTR -.-> RETRY
+  WHERE -->|模型上下文| CONTEXT --> FIRST
+  FIRST -->|是| COMPRESS
+  COMPRESS -->|成功| OK
+  COMPRESS -->|仍失败| RAISE
+  FIRST -->|否| RAISE --> CHATERR
+  WHERE -->|工作流任务| WF --> DEP --> OBS --> REPLAN
+  REPLAN -->|是，默认 1 次，上限 2 次| PLAN
+  PLAN -->|任务图变化| RERUN --> OBS
+  PLAN -->|图不变| FINAL
+  REPLAN -->|否| FINAL
+  WHERE -->|会话封存| SEAL --> FALLBACK --> WARN
+  WHERE -->|外部写入| WRITE --> WFAILED --> VERIFY
+  WHERE -->|存储| STORAGE
+  STORAGE --> DESKTOP & VECTOR
+  VECTOR --> FALLBACK_BM25 & VECTOR_ERR
+  WHERE -->|断线 / 进程终止| LIMIT

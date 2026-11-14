@@ -1,0 +1,58 @@
+%% 依据：frontend/app/workspace/page.tsx、backend/app/services/agents/chat_agent.py::_completion_summary、schemas/workflow.py、api/routes/chat.py::_persist_engineering_workflow、api/routes/action_drafts.py、services/chat_memory.py。
+flowchart TB
+  subgraph LOOP["A / ChatAgent completion：本轮循环结果"]
+    RUNNING["running"]
+    COMPLETE["completed<br/>模型最终回答 / 已有证据答复"]
+    ERRORS["completed_with_tool_errors<br/>已答复但存在工具错误"]
+    BLOCKED["blocked<br/>重复调用 / Skill 激活失败<br/>无模型且无证据 / 工具均失败"]
+    BUDGET["budget_exhausted<br/>达到 max_steps = 12"]
+    RUNNING --> COMPLETE
+    COMPLETE -->|工具轨迹包含 error| ERRORS
+    RUNNING --> BLOCKED & BUDGET
+  end
+  subgraph TASK["B / 工程工作流：调度状态与持久结果"]
+    PENDING["pending 集合<br/>等待依赖完成"]
+    EXECUTING["执行器运行中<br/>asyncio.wait_for 超时边界"]
+    TSUCCESS["success"]
+    TERROR["error<br/>超时 / 运行异常 / 缺失或循环依赖"]
+    TSKIP["skipped<br/>依赖失败 / 无注册执行器"]
+    WSTATUS["AgentWorkflowRun.status<br/>error_count > 0 → error<br/>否则 → success"]
+    PENDING -->|依赖均成功| EXECUTING
+    PENDING -->|依赖失败 / 无执行器| TSKIP
+    PENDING -->|无就绪任务| TERROR
+    EXECUTING --> TSUCCESS & TERROR
+    TSUCCESS & TERROR & TSKIP --> WSTATUS
+  end
+  subgraph PLAN["协作计划：界面状态"]
+    BUILD["生成分工<br/>POST /api/chat/plan"]
+    READY["ready<br/>显示分工，等待用户确认"]
+    EXEC["executing<br/>接收任务结果和报告"]
+    FINISHED["done"]
+    PFAIL["error"]
+    BUILD -->|返回计划| READY
+    BUILD -->|请求失败| PFAIL
+    READY -->|确认执行| EXEC
+    EXEC -->|收到成功结果| FINISHED
+    EXEC -->|停止接收或失败| PFAIL
+  end
+  subgraph DRAFT["C / ActionDraft：独立确认生命周期"]
+    WAIT["pending_confirmation"]
+    CANCEL["cancelled"]
+    EXTERNAL["调用外部接口<br/>没有单独持久化 executing 状态"]
+    DONE["executed"]
+    FAIL["failed"]
+    WAIT -->|取消| CANCEL
+    WAIT -->|确认并通过权限检查| EXTERNAL
+    EXTERNAL -->|成功| DONE
+    EXTERNAL -->|异常| FAIL
+  end
+  subgraph SESSION["D / ChatSession：原始记录与记忆封存"]
+    SEALING["sealing<br/>原始 transcript 已 flush"]
+    SEALED["sealed"]
+    WARN["sealed_with_warnings<br/>提取或记忆持久化失败"]
+    SEALING -->|封存完成| SEALED
+    SEALING -->|有 errors| WARN
+  end
+  NOTE["状态解释<br/>AgentRun.status=success 表示路由已保存 final，不能代替 completion。<br/>任务 schema 定义 pending / running，但工作流主要在结束后保存结果。<br/>草稿 failed 当前不可再次 confirm；无暂停恢复接口或持久执行断点。"]
+  COMPLETE & BLOCKED & BUDGET -.-> NOTE
+  WSTATUS & FAIL -.-> NOTE

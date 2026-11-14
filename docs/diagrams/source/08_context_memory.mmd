@@ -1,0 +1,45 @@
+%% 依据：backend/app/services/chat_memory.py、context_compression.py、memory_hub.py、services/skills/registry.py、api/routes/chat.py。
+flowchart TB
+  REQUEST["新消息<br/>repo_id + conversation_id"]
+  RAW[("ChatMessage / ChatSession<br/>原始消息 · 工具轨迹 · transcript")]
+  PRECHECK["ProgressiveContextManager<br/>估算窗口压力 · 分阶段压缩预检"]
+  BOUNDARY["压缩边界消息<br/>摘要 · transcript_ref · rehydration"]
+  RECENT["近期历史投影<br/>微压缩 + 预算裁剪<br/>保留工具调用 / 结果配对"]
+  MEMORY[("ConversationMemory / ThreadMemory<br/>摘要 · 事实 · 决策 · 任务 · 偏好 · 引用")]
+  EVIDENCE[("EvidenceItem<br/>仓库与会话内的相关证据")]
+  ASSEMBLE["ContextAssembler<br/>仓库信息 + 记忆 + 摘要 + 证据 + 历史"]
+  BUDGET["ContextBudget<br/>system / memory / evidence / recent<br/>tool observations / reserved response"]
+  SKILL["SkillRegistry<br/>显式或自动激活 SKILL.md<br/>受限资源 · 指令摘要 · 输出契约"]
+  PROMPT["ChatAgent 模型输入<br/>上下文覆盖率 + token 诊断"]
+  SELECT{"需要补充哪类信息？"}
+  EXACT["MCP MemoryTools<br/>精确读取消息片段 / 封存事件<br/>分页与字符预算"]
+  RAG["rag.search_similar_documents<br/>文档证据检索与引用"]
+  CODE["workspace.search_code / read_file<br/>当前代码以 checkout 为准"]
+  SNAPSHOT["Issue / PR / CI 工具<br/>结构化同步快照与分析"]
+  ANSWER["回答与工具观察<br/>附引用、模型用量与诊断"]
+  SEAL["SessionSealer<br/>先保存原始 transcript，再提取摘要"]
+  EXTRACT["模型提取结构化记忆<br/>失败使用确定性回退"]
+  MERGE["更新会话/线程记忆<br/>限制 token 预算"]
+  CANDIDATE[("MemoryCandidate<br/>去重后的事实、决策、任务等候选<br/>pending")]
+  REVIEW{"用户审核候选"}
+  APPROVED["approved<br/>转为 memory_note 文档"]
+  REJECTED["rejected<br/>保留审核状态"]
+  DOCUMENT[("Document：已审核记忆<br/>BM25 / 可选 Milvus 或 pgvector")]
+  NOTE["两个层次<br/>会话/线程摘要随封存自动更新；<br/>候选进入知识文档需审核。原始历史不被摘要替代。"]
+  REQUEST --> PRECHECK
+  RAW --> PRECHECK
+  PRECHECK -->|达到阈值| BOUNDARY
+  RAW --> RECENT
+  BOUNDARY & RECENT & MEMORY & EVIDENCE & BUDGET --> ASSEMBLE
+  ASSEMBLE & SKILL --> PROMPT --> SELECT
+  SELECT --> EXACT & RAG & CODE & SNAPSHOT
+  EXACT --> RAW
+  RAG --> DOCUMENT
+  EXACT & RAG & CODE & SNAPSHOT --> ANSWER
+  ANSWER --> SEAL --> RAW
+  SEAL --> EXTRACT --> MERGE --> MEMORY
+  EXTRACT --> CANDIDATE --> REVIEW
+  REVIEW -->|批准| APPROVED --> DOCUMENT
+  REVIEW -->|拒绝| REJECTED
+  DOCUMENT -. 下次重建证据 .-> EVIDENCE
+  MERGE -.-> NOTE

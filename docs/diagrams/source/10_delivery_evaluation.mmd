@@ -1,0 +1,38 @@
+%% 依据：backend/app/api/routes/evaluations.py、services/evals/ragas_runner.py、services/evals/suites.py、docs/examples/evals/rag_cases.json。
+flowchart TB
+  INPUT["评估输入<br/>repo_id · top_k · run_judge<br/>固定 suite_id 或自定义 cases"]
+  VALID["校验仓库与题集<br/>cases 与 suite_id 不能同时提交"]
+  HASH["记录 evaluation_set<br/>题集 ID / SHA256 / 用例数"]
+  QUEUE[("EvalRun.result_json<br/>status = queued")]
+  BG["FastAPI BackgroundTasks<br/>独立 SessionLocal · 记录 running 进度"]
+  CASE["逐题创建临时 evaluation 会话<br/>数据库 savepoint 隔离运行时写入"]
+  AGENT["生产 ChatAgent 路径<br/>真实工具装配 + evaluation_mode"]
+  CAPTURE["保存逐题现场<br/>回答 · 引用 · 工具调用 / 观察<br/>retrieved_contexts / sources · completion"]
+  ROLLBACK["回滚该题 savepoint<br/>不保留临时会话写入"]
+  HARD["确定性硬规则<br/>必含/禁含文本 · 正则 · 来源命中<br/>必需工具 · 无工具错误 · 答案与上下文非空"]
+  RETRIEVAL["检索指标<br/>Recall@K · Precision@K · MRR · nDCG"]
+  JUDGE{"启用且可用的 Judge<br/>并有检索上下文？"}
+  SCORE["RAGAS 语义评分<br/>逐项记录分数、阈值、错误与覆盖率"]
+  SKIP["明确记录未评分原因<br/>judge_disabled / unavailable / no_contexts"]
+  FINAL["_finalize_result<br/>同时检查硬规则、评分完整性与阈值"]
+  STATUS{"最终质量判定"}
+  PASS["passed<br/>硬规则通过 + 必需语义指标完整通过"]
+  PARTIAL["partial<br/>硬规则通过，但未请求 Judge"]
+  FAILED["status = failed / error<br/>quality_status = failed / incomplete"]
+  EMPTY["status = no_cases<br/>quality_status = not_evaluated"]
+  SAVE[("EvalRun<br/>完整结果、诊断、耗时与进度")]
+  REVIEW["frontend/app/evals<br/>查看逐题证据、指标与失败原因"]
+  RESCORE["重评分<br/>复用已保存证据，仅补评缺失/错误指标<br/>不重新运行 ChatAgent"]
+  COMPARE["基线对比<br/>校验仓库、题集与 top_k 等一致性"]
+  ISSUE["可生成问题草稿<br/>经 ActionDraft 确认后才写 GitHub"]
+  LIMIT["评估边界<br/>进程内后台任务没有持久队列恢复。<br/>演示/Mock 测试不代表真实模型质量；<br/>题集、检索证据与评分结果必须一起解释。"]
+  INPUT --> VALID --> HASH --> QUEUE --> BG --> CASE --> AGENT --> CAPTURE --> ROLLBACK
+  CAPTURE --> HARD & RETRIEVAL & JUDGE
+  JUDGE -->|是| SCORE --> FINAL
+  JUDGE -->|否| SKIP --> FINAL
+  HARD & RETRIEVAL --> FINAL --> STATUS
+  STATUS --> PASS & PARTIAL & FAILED & EMPTY
+  PASS & PARTIAL & FAILED & EMPTY --> SAVE --> REVIEW
+  REVIEW --> RESCORE --> FINAL
+  REVIEW --> COMPARE & ISSUE
+  BG -.-> LIMIT

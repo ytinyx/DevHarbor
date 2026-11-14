@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="420" viewBox="0 0 1400 420" role="img" aria-labelledby="title desc">
+  <title id="title">DevHarbor | 软件研发 AI 工作台</title>
+  <desc id="desc">DevHarbor 将当前代码、CI 日志和项目文档组织为带来源的工程分析证据。</desc>
+
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="100%" y2="100%">
+      <stop stop-color="#0d1d31"/>
+      <stop offset="1" stop-color="#112c40"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="82%" cy="44%" r="54%">
+      <stop stop-color="#247780" stop-opacity=".36"/>
+      <stop offset="1" stop-color="#247780" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M 28 0 H 0 V 28" fill="none" stroke="#9fd0de" stroke-opacity=".09"/>
+    </pattern>
+    <linearGradient id="grid-fade">
+      <stop stop-color="white" stop-opacity="0"/>
+      <stop offset=".35" stop-color="white"/>
+      <stop offset="1" stop-color="white" stop-opacity=".32"/>
+    </linearGradient>
+    <mask id="grid-mask">
+      <rect x="640" width="760" height="420" fill="url(#grid-fade)"/>
+    </mask>
+    <linearGradient id="evidence" x1="0" y1="0" x2="100%" y2="100%">
+      <stop stop-color="#e8fbf7"/>
+      <stop offset="1" stop-color="#b5ece3"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1400" height="420" fill="url(#background)"/>
+  <rect width="1400" height="420" fill="url(#glow)"/>
+  <rect x="640" width="760" height="420" fill="url(#grid)" mask="url(#grid-mask)"/>
+
+  <g font-family="'Segoe UI','Microsoft YaHei','PingFang SC','Noto Sans CJK SC',sans-serif">
+    <path d="M 76 106 H 124" fill="none" stroke="#65d7cb" stroke-width="5" stroke-linecap="round"/>
+    <text x="71" y="197" fill="#f4f9fc" font-size="88" font-weight="700" letter-spacing="-3">DevHarbor</text>
+    <text x="76" y="260" fill="#d9f4f1" font-size="40" font-weight="600">软件研发 AI 工作台</text>
+    <text x="77" y="312" fill="#b6ccd9" font-size="24">基于代码、CI 日志与项目知识分析工程问题</text>
+
+    <g fill="none" stroke="#64cfc5" stroke-width="2">
+      <path d="M 954 126 H 987 Q 999 126 999 138 V 198 Q 999 210 1011 210 H 1070"/>
+      <path d="M 954 210 H 1011"/>
+      <path d="M 954 294 H 987 Q 999 294 999 282 V 222 Q 999 210 1011 210"/>
+      <path d="M 1062 202 L 1070 210 L 1062 218" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <g fill="#17374a" stroke="#466b7a" stroke-width="1.5">
+      <rect x="752" y="96" width="202" height="60" rx="12"/>
+      <rect x="752" y="180" width="202" height="60" rx="12"/>
+      <rect x="752" y="264" width="202" height="60" rx="12"/>
+    </g>
+    <g fill="none" stroke="#7fe4d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 781 119 L 774 126 L 781 133 M 791 119 L 798 126 L 791 133 M 788 115 L 784 137"/>
+      <path d="M 774 217 H 798 M 775 207 H 780 L 784 201 L 789 212 L 793 207 H 797"/>
+      <path d="M 778 282 H 789 L 795 288 V 305 H 778 Z M 789 282 V 288 H 795 M 782 294 H 790 M 782 299 H 790"/>
+    </g>
+    <g fill="#e1f1f5" font-size="25" font-weight="600">
+      <text x="814" y="135">当前代码</text>
+      <text x="814" y="219">CI 日志</text>
+      <text x="814" y="303">项目文档</text>
+    </g>
+
+    <rect x="1086" y="120" width="238" height="180" rx="18" fill="url(#evidence)"/>
+    <text x="1112" y="171" fill="#173d45" font-size="30" font-weight="700">分析与引用</text>
+    <path d="M 1112 190 H 1298" fill="none" stroke="#4d8c8d" stroke-opacity=".43"/>
+    <g fill="none" stroke="#326d72" stroke-width="2" stroke-linecap="round">
+      <path d="M 1116 218 L 1121 223 L 1129 214 M 1142 219 H 1287"/>
+      <path d="M 1116 241 L 1121 246 L 1129 237 M 1142 242 H 1270"/>
+      <path d="M 1116 264 L 1121 269 L 1129 260 M 1142 265 H 1280"/>
+    </g>
+  </g>
+</svg>

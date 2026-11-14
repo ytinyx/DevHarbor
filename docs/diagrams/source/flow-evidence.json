@@ -1,0 +1,55 @@
+{
+  "scope": "Current DevHarbor implementation; not a future design or test report",
+  "diagrams": [
+    {
+      "id": "01_project_architecture",
+      "sources": ["backend/app/main.py", "backend/app/api/routes/chat.py", "backend/app/api/routes/workspaces.py", "backend/app/services/agents/chat_agent.py", "backend/app/services/agents/workflow_orchestrator.py", "backend/app/db/models.py"],
+      "limits": ["Web and desktop reuse the application code with separate runtime configuration.", "The desktop backend validates its startup token. GitHub actions still pass through the confirmation and permission routes.", "Workspace groups repository IDs for multi-repository reports."]
+    },
+    {
+      "id": "02_technical_architecture",
+      "sources": ["docker-compose.yml", "frontend/electron/main.cjs", "frontend/electron/preload.cjs", "frontend/lib/api.ts", "backend/desktop.py", "backend/desktop_database.py", "backend/app/main.py", "backend/app/services/mcp_client.py", "backend/app/services/rag/vector_store.py"],
+      "limits": ["Compose provides infrastructure. The desktop host starts its own loopback backend and checks health with the startup token.", "Desktop defaults to SQLite and BM25. A configured PostgreSQL connection is selected at restart, with SQLite fallback on startup database failure.", "Vector retrieval selects Milvus or pgvector. pgvector requires the vector extension in the active PostgreSQL business database.", "BackgroundTasks run inside the backend process."]
+    },
+    {
+      "id": "03_execution_flow",
+      "sources": ["backend/app/api/routes/chat.py", "backend/app/services/agents/chat_agent.py", "backend/app/services/agents/workflow_orchestrator.py"],
+      "limits": ["The graph allows at most 12 model-decision steps and stops an identical tool call after 2 executions.", "The workflow defaults to 1 replan, caps requested replans at 2, and reuses successful task results.", "The collaboration plan is previewed at /api/chat/plan and runs at /api/chat/plan/execute/stream after user confirmation.", "The draft-confirmation API is separate from both execution paths."]
+    },
+    {
+      "id": "04_chat_sequence",
+      "sources": ["backend/app/api/routes/chat.py", "backend/app/services/agents/chat_agent.py", "backend/app/services/chat_memory.py", "backend/app/api/routes/action_drafts.py"],
+      "limits": ["Answer delta events are chunks of an already generated answer, not model token streaming.", "The normal route commits assistant message, run and sealed session before forwarding final.", "The collaboration plan preview, confirmed plan execution, and action-draft confirmation are distinct requests.", "No graph checkpointer is configured."]
+    },
+    {
+      "id": "06_tool_execution",
+      "sources": ["backend/app/services/agents/chat_agent.py", "backend/app/api/routes/chat.py", "backend/app/api/routes/action_drafts.py", "backend/app/services/permissions.py", "backend/app/services/github/client.py"],
+      "limits": ["Confirmation can issue real GitHub writes, including in DEMO_MODE.", "send_report only records a local status and does not send through an external messaging channel.", "The confirmation route has no idempotency key, transaction lock or external-effect reconciliation."]
+    },
+    {
+      "id": "07_failure_recovery",
+      "sources": ["backend/app/services/agents/chat_agent.py", "backend/app/services/agents/workflow_orchestrator.py", "backend/app/services/chat_memory.py", "backend/app/api/routes/action_drafts.py", "backend/app/services/rag/retrieval.py", "backend/desktop.py", "frontend/electron/main.cjs"],
+      "limits": ["Only timeout, rate-limit and transient-network tool failures can receive one retry; safety/report/workflow tools are excluded.", "A model context-overflow failure can trigger one aggressive context-projection retry.", "Session enrichment failures preserve the raw transcript and produce sealed_with_warnings.", "The desktop host can relaunch the backend with local SQLite after a PostgreSQL startup failure. Hybrid retrieval can continue with BM25 after a vector-store failure.", "SSE disconnect and process restart have no durable continuation guarantee."]
+    },
+    {
+      "id": "08_context_memory",
+      "sources": ["backend/app/services/chat_memory.py", "backend/app/services/context_compression.py", "backend/app/services/memory_hub.py", "backend/app/services/skills/registry.py"],
+      "limits": ["Conversation/thread summaries update automatically on sealing; promoting a memory candidate into a knowledge document requires review.", "Raw transcript recovery and context compression are separate from task checkpointing."]
+    },
+    {
+      "id": "09_task_state",
+      "sources": ["backend/app/services/agents/chat_agent.py", "backend/app/schemas/workflow.py", "backend/app/api/routes/chat.py", "backend/app/api/routes/action_drafts.py", "backend/app/services/chat_memory.py"],
+      "limits": ["AgentRun.status=success records receipt of final, including blocked/budget-exhausted completions; inspect completion separately.", "Workflow status is derived from error_count; skipped-only results can still be stored as success.", "Workflow schema includes pending/running, but task-result records are normally written after execution.", "Only pending_confirmation drafts can be confirmed or cancelled; failed drafts have no confirm retry transition."]
+    },
+    {
+      "id": "10_delivery_evaluation",
+      "sources": ["backend/app/api/routes/evaluations.py", "backend/app/services/evals/ragas_runner.py", "backend/app/services/evals/suites.py", "docs/examples/evals/rag_cases.json"],
+      "limits": ["Each case uses a fresh evaluation conversation and rolls back runtime database writes through a savepoint.", "Judge-disabled runs with passing hard rules are partial, not passed.", "Completion is stored in each case but is not itself checked by _hard_rules.", "Rescore retries missing or failed Judge metrics from stored evidence without rerunning the Agent.", "Recall@K is implemented as an any-expected-source hit rate, not fractional multi-source recall."]
+    },
+    {
+      "id": "11_rag_pipeline",
+      "sources": ["backend/app/api/routes/rag.py", "backend/app/services/rag/document_processing.py", "backend/app/services/rag/chunking.py", "backend/app/services/rag/vector_store.py", "backend/app/services/rag/pgvector_store.py", "backend/app/services/rag/retrieval.py", "backend/app/services/rag/knowledge_base.py", "backend/app/services/rag/answer_gate.py", "backend/app/services/rag/qa.py", "backend/app/api/routes/chat.py"],
+      "limits": ["The background upload route is /api/rag/repositories/{repo_id}/documents; /api/repos/{repo_id}/knowledge/upload is synchronous.", "With Embedding disabled, document processing enters indexing and retrieval uses fulltext/BM25.", "pgvector vectors share the SQL transaction with documents; Milvus writes are independent.", "Hybrid retrieval continues with BM25 when the vector store is unavailable. Vector-only mode propagates VectorStoreUnavailableError, which the API maps to 503.", "ChatAgent's direct search tool has its own retrieval path. Full QA applies configured reranking, parent expansion, threshold filtering and the heuristic Answer Gate."]
+    }
+  ]
+}
