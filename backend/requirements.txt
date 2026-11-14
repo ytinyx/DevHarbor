@@ -15,7 +15,7 @@ langgraph==1.2.14
 langgraph-sdk==0.4.6
 langchain-openai==1.2.1
 ragas==0.4.3
-openai==2.53.0
+openai==3.49.0
 datasets>=3.0.0
 python-dotenv==1.2.2
 PyYAML==6.0.3
