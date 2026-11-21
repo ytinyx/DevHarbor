@@ -4,5 +4,5 @@
   "private": true,
   "description": "Offline diagram build tools; not application dependencies",
   "scripts": { "build": "node build.cjs" },
-  "devDependencies": { "mermaid": "10.9.3", "playwright": "1.56.1" }
+  "devDependencies": { "mermaid": "10.9.3", "playwright": "1.65.1" }
 }
